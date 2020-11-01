@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hex WarS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/main.css">
+    
+</head>
+<body>
+   
+
+    <div id = 'container' class = 'container'>
+        
+     
+      <div id = 'mainMenu' class = 'row'>
+         
+         <div class = 'col-5'>
+            <div class = row>
+               <div class = 'col-8'>
+                  <input id = 'inputName' type="text" class="form-control" placeholder="Введите свой ник" aria-label="Recipient's username" aria-describedby="basic-addon2">
+               </div>
+               <div class = 'col-2'>
+                  <button id = 'saveName' type="button" class="btn btn-secondary">Сохранить</button>
+               </div>
+            </div>
+            <div class = 'row justify-content-start'>
+               <div class = 'col-7'>
+                  <p>&nbsp;</p>
+                  <p>&nbsp;</p>
+                  <p>&nbsp;</p>
+                  <h5>Создание игры ОоО</h5>
+                  <p>&nbsp;</p>
+                  <input id = 'inputMap' type="text" class="form-control" placeholder="Название" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                  <p>&nbsp;</p>
+                  <div class = 'row'>
+                     <div class = 'col-5'>
+                        <p>Тип игры</p>
+                     </div>
+                     <div class = 'col-2'>
+                        <div class="dropdown">
+                           <button id = 'mapType' class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           1x1
+                           </button>
+                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a id = 'mapType_1x1' class="dropdown-item" href="#">1x1</a>                              
+                              <a id = 'mapType_2x2' class="dropdown-item" href="#">2x2</a>
+                              <a id = 'mapType_3x3' class="dropdown-item" href="#">3x3</a>
+                              <a id = 'mapType_4x4' class="dropdown-item" href="#">4x4</a>
+                              <a id = 'mapType_2x2x2' class="dropdown-item" href="#">2x2x2</a>
+                              <a id = 'mapType_2x2x2x2' class="dropdown-item" href="#">2x2x2x2</a>
+                              <a id = 'mapType_FFA' class="dropdown-item" href="#">FFA</a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <p>&nbsp;</p>
+                  <div class = 'row'>
+                     <div class = 'col-5'>
+                        <p>Карта</p>
+                     </div>
+                     <div class = 'col-2'>
+                        <div class="dropdown">
+                           <button id = 'mapSize' class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           Duel
+                           </button>
+                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a id = 'mapSize_Duel' class="dropdown-item" href="#">Duel</a>
+                              <a id = 'mapSize_VerySmall' class="dropdown-item" href="#">Very Small</a>
+                              <a id = 'mapSize_Small' class="dropdown-item" href="#">Small</a>
+                              <a id = 'mapSize_Medium' class="dropdown-item" href="#">Medium</a>
+                              <a id = 'mapSize_Large' class="dropdown-item" href="#">Large</a>
+                              <a id = 'mapSize_VeryLarge' class="dropdown-item" href="#">Very large</a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <p>&nbsp;</p>
+                  <div id = 'blockPlayersCount' class = 'row d-none'>
+                     <div class = 'col-5'>
+                        <p>Игроков</p>
+                     </div>
+                     <div class = 'col-2'>
+                        <div class="dropdown">
+                           <button id = 'playersCount' class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           2
+                           </button>
+                           <div id = 'mapPlayerCount' class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a id = 'playersCount_2' class="dropdown-item" href="#">2</a>
+                              <a id = 'playersCount_3' class="dropdown-item d-none" href="#">3</a>
+                              <a id = 'playersCount_4' class="dropdown-item d-none" href="#">4</a>
+                              <a id = 'playersCount_5' class="dropdown-item d-none" href="#">5</a>
+                              <a id = 'playersCount_6' class="dropdown-item d-none" href="#">6</a>
+                              <a id = 'playersCount_7' class="dropdown-item d-none" href="#">7</a>
+                              <a id = 'playersCount_8' class="dropdown-item d-none" href="#">8</a>
+                              <a id = 'playersCount_9' class="dropdown-item d-none" href="#">9</a>
+                              <a id = 'playersCount_10' class="dropdown-item d-none" href="#">10</a>
+                              <a id = 'playersCount_11' class="dropdown-item d-none" href="#">11</a>
+                              <a id = 'playersCount_12' class="dropdown-item d-none" href="#">12</a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <p>&nbsp;</p>
+                  <button id = 'createGame' type="button" class="btn btn-secondary btn-lg">Создать игру</button>
+               </div>
+            </div>
+         </div>
+         <div class = 'col-7'>
+            <table id = 'table' class="table table-bordered table-hover">
+               <thead>
+                  <tr>
+                     <th scope="col">Название</th>
+                     <th scope="col">Игроков</th>
+                     <th scope="col">Тип игры</th>
+                     <th scope="col">Карта</th>
+                     <th scope="col">Хост</th>
+                  </tr>
+               </thead>
+               <tbody id = 'tbody'>
+
+               </tbody>
+            </table>
+            <div class = 'row justify-content-end'>
+               <button id = 'connectButton' type="button" class="btn btn-secondary btn-lg">Подключиться</button>
+            </div>
+         </div>
+      </div>
+        
+
+
+
+
+
+
+
+      
+    <div id = 'lobbyPage' class = 'row d-none'>
+         <div class = 'col align-items-start'>
+            <table id = 'table2' class="table table-bordered table-hover">
+            <thead>
+               <tr>
+                  <th scope="col">Ник                       </th>
+                  <th scope="col">Команда</th>
+                  <th scope="col">Цвет   </th>
+               </tr>
+            </thead>
+            <tbody id = 'tbody2'>
+               <tr>
+                  <td>Kerrigan</td>
+                  <td><div class="dropdown">
+                     <button class=" btn-secondary dropdown-toggle" type="button" id="teamButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="true" >
+                        1
+                     </button>
+                     <div id = 'teamDiv'class="dropdown-menu" >
+                        <a class="dropdown-item">1</a>
+                        <a class="dropdown-item">2</a>
+                        <a class="dropdown-item">3</a>
+                        <a class="dropdown-item">4</a>
+                        <a class="dropdown-item">5</a>
+                        <a class="dropdown-item">6</a>
+                        <a class="dropdown-item">7</a>
+                        <a class="dropdown-item">8</a>
+                        <a class="dropdown-item">9</a>
+                        <a class="dropdown-item">10</a>
+                        <a class="dropdown-item">11</a>
+                        <a class="dropdown-item d-none">12</a>
+                     </div>
+                   </div></td>
+                  <td><div class="dropdown">
+                     <button class="border-0 dropdown-toggle " type="button" id="colorButton" data-toggle="dropdown" aria-haspopup="false" aria-expanded="true" style = 'background-color: blue; color: blue'>
+                        ██████
+                     </button>
+                     <div id = 'colorDiv' class="dropdown-menu" >
+                       <a class="dropdown-item " style = 'color:blue' href="#">█████████</a>
+                       <a class="dropdown-item " style = 'color:red'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:yellow'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:aqua' href="#">█████████</a>
+                       <a class="dropdown-item " style = 'color:indigo'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:orange'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:green' href="#">█████████</a>
+                       <a class="dropdown-item " style = 'color:hotpink'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:silver'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:LightSteelBlue' href="#">█████████</a>
+                       <a class="dropdown-item " style = 'color:DarkGreen'href="#">█████████ </a>
+                       <a class="dropdown-item " style = 'color:saddlebrown'href="#">█████████ </a>
+                     </div>
+                   </div>
+                  </td>
+               </tr>
+            </tbody>
+            </table>
+         </div>
+         <div>
+            <div class = 'col align-self-end mb-5'>
+               <button id = 'leaveButton' type="button" class="btn btn-secondary btn-lg ">Покинуть игру</button>
+            </div>  
+            <div class = 'col align-self-end mb-5'>
+               <button id = 'startGameButton' type="button" class="btn btn-secondary btn-lg d-none ">&nbsp Начать игру &nbsp</button>
+            </div> 
+         </div> 
+    </div>
+
+    </div>
+
+
+    <canvas id = "menuCanvas"></canvas>
+    <canvas id = "canvas"></canvas>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src = "js/client.js"></script>
+    <!-- <script src = "js/main.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+    
+</body>
+</html>
