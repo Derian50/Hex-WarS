@@ -278,10 +278,33 @@ socket.on('setSide', function(data){
 })
 socket.on('sentInfoAboutGame', function(data){
     console.log('Получаю инфу об игре')
-    units = data[1]
+    updateInfoAboutGame(data)
+    
+})
+var updateInfoAboutGame = function(data){
+    for(var i = 0; data[1].length > units.length ? data[1].length : units.length; i++){
+        if(data[1].length > units.length){
+            units.push(data[1][data[1].length-1])
+        }
+        if(data[1][i].id == units[i].id){
+            units[i].finalHexX = data[1][i].finalHexX
+            units[i].finalHexY = data[1][i].finalHexY
+            units[i].stepToX = data[1][i].stepToX
+            units[i].stepToY = data[1][i].stepToY
+            units[i].move = data[1][i].move
+            units[i].direction = data[1][i].direction
+            units[i].inCooldown = data[1][i].inCooldown
+            units[i].cooldown = data[1][i].cooldown
+            units[i].progressRes = data[1][i].progressRes
+
+        }else if(units[i].id < data[1][i].id){
+                units.splice(i,1)
+                i--
+        }
+    }
     builds = data[2]
     arrows = data[3]
-})
+}
 var updateVisible = function(){
     for(var i = 0; i < HEXWIDTH; i++){
         for(var j = 0; j < HEXHEIGHT; j++){
@@ -1832,6 +1855,9 @@ var getChanceToWin = function(typeAttack, attackerType, defenderType){
 }
 var eatUnit = function(index){
     units.splice(index, 1)
+    console.log('Обновляю инфу об игре')
+    socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
+        
 
 }
 var fightVsStructure = function(unit, structure){
@@ -1841,6 +1867,9 @@ var fightVsStructure = function(unit, structure){
     }else{
         builds.splice(structure, 1)
     }
+    console.log('Обновляю инфу об игре')
+    socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
+        
 }
 var checkCollision = function(unitWhoEat){
         for(var i = 0; i < units.length; i++){
@@ -1943,6 +1972,9 @@ var moveAndCheckArrows = function(){
                 
             }
             arrows.splice(i, 1)
+            console.log('Обновляю инфу об игре')
+            socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
+        
         }
     }
 }
@@ -2026,12 +2058,10 @@ var renderEditButton = function(){
 var renderUnits = function(){
     for(var i = 0; i < units.length; i++){
         if(!hexArr[units[i].hexX][units[i].hexY].visible) continue
-        if(units[i].active && units[i].side === "Blue"){
+        if(units[i].active && units[i].side == yourSide){
             units[i].color = '#67E300'
         } else if(units[i].side === "Blue"){
             units[i].color = '#190772'
-        }else if(units[i].active && units[i].side === "Red"){
-            units[i].color = '#67E300'
         } else if(units[i].side === "Red"){
             units[i].color = '#9F0013'
         }
@@ -2275,7 +2305,7 @@ var renderBuildStuctureAndUnit = function(){
 }
 var collectRes = function(){
     for(var i = 0; i < units.length; i++){
-        if(units[i].type == 'W'){
+        if(units[i].type == 'W' && units[i].side == yourSide){
                 gold += 1/600/24*5
             if((hexArr[units[i].hexX][units[i].hexY].groundType == 'forest' || hexArr[units[i].hexX][units[i].hexY].groundType == 'beach')){
                 if(units[i].progressRes <= 16){
