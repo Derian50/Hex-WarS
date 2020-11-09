@@ -282,26 +282,7 @@ socket.on('sentInfoAboutGame', function(data){
     
 })
 var updateInfoAboutGame = function(data){
-    for(var i = 0; data[1].length > units.length ? data[1].length : units.length; i++){
-        if(data[1].length > units.length){
-            units.push(data[1][data[1].length-1])
-        }
-        if(data[1][i].id == units[i].id){
-            units[i].finalHexX = data[1][i].finalHexX
-            units[i].finalHexY = data[1][i].finalHexY
-            units[i].stepToX = data[1][i].stepToX
-            units[i].stepToY = data[1][i].stepToY
-            units[i].move = data[1][i].move
-            units[i].direction = data[1][i].direction
-            units[i].inCooldown = data[1][i].inCooldown
-            units[i].cooldown = data[1][i].cooldown
-            units[i].progressRes = data[1][i].progressRes
-
-        }else if(units[i].id < data[1][i].id){
-                units.splice(i,1)
-                i--
-        }
-    }
+    units = data[1]
     builds = data[2]
     arrows = data[3]
 }
@@ -557,7 +538,7 @@ var wantBuildStructure = function(structureType){
 
 } 
 var canBuild = function(toHexX, toHexY){
-    if(checkDist(activeHexX, activeHexY, toHexX, toHexY) == 1 && hexArr[toHexX][toHexY].groundType !== 'mountain' && !whatIsBuildIndex(toHexX, toHexY) && !whatIsUnitIndex(toHexX, toHexY)){
+    if(checkDist(activeHexX, activeHexY, toHexX, toHexY) == 1 && hexArr[toHexX][toHexY].groundType !== 'mountain'&& hexArr[toHexX][toHexY].groundType !== 'water' && !whatIsBuildIndex(toHexX, toHexY) && !whatIsUnitIndex(toHexX, toHexY)){
         return true
     }else{
         return false
