@@ -1837,6 +1837,7 @@ var getChanceToWin = function(typeAttack, attackerType, defenderType){
 var eatUnit = function(index){
     units.splice(index, 1)
     console.log('Обновляю инфу об игре')
+
     socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
 
@@ -2321,6 +2322,23 @@ var renderCollectRes = function(){
         }
     }
 }
+var checkActive = function(){
+    if(activeHexX == -1 && activeHexY == -1){
+        return
+    }
+    for(var i = 0; i < units.length; i++){
+        if(units[i].hexX == activeHexX && units[i].hexY == activeHexY){
+            return
+        }
+    }
+    for(var i = 0; i < builds.length; i++){
+        if(builds[i].hexX == activeHexX && builds[i].hexY == activeHexY){
+            return
+        }
+    }
+    activeHexX = -1
+    activeHexY = -1
+}
 var startGame = function(){
     //createArrs()
     
@@ -2353,6 +2371,7 @@ var mainLoop = function(){
     renderMenu()
     renderBuildStuctureAndUnit()
     checkFalseHex()
+    checkActive()
 
     requestAnimationFrame(mainLoop)
 }
