@@ -287,8 +287,11 @@ var updateInfoAboutGame = function(data){
     // builds = data[2]
     // arrows = data[3]
     switch(data[0]){
-        case 'moveUnit': //currentHexX, currentHexY, toHexX, toHexY, dist
-            createMovePath(data[1], data[2], data[3], data[4], data[5])
+        case 'moveUnit': //currentHexX, currentHexY, toHexX, toHexY, dist, side
+            var t = yourSide
+            yourSide = data[6]
+            createMovePath(data[1], data[2], data[3], data[4], data[5], data[6])
+            yourSide = t
             break
         case 'killUnit': //units.id
             for(var i = 0; i < units.length; i++){
@@ -782,7 +785,7 @@ var meleeMoveOrAttack = function(currentHexX, currentHexY, x, y){
         activeHexY = -1
         activeType = null
         socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
-        createMovePath(currentHexX, currentHexY, x, y, dist)
+        createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitsIndex].active = true
         activeType = 'unit'
@@ -832,7 +835,7 @@ var WMove = function(currentHexX, currentHexY, x, y){
         activeHexY = -1
         console.log('Рабочий полетел')
         socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
-        createMovePath(currentHexX, currentHexY, x, y, dist)
+        createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitIndex].active = true
         activeType = 'unit'
@@ -901,7 +904,7 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         activeHexX = -1
         activeHexY = -1
         socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
-        createMovePath(currentHexX, currentHexY, x, y, dist)
+        createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitIndex].active = true
         activeType = 'unit'
@@ -1521,13 +1524,13 @@ var canThisUnitGoToThisHex = function(currentHexX, currentHexY, toHexX, toHexY, 
 }
 var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
     unitIndex = whatIsUnitIndex(hexX, hexY)
-    // if(!canThisUnitGoToThisHex(hexX, hexY, toHexX, toHexY, dist)){
-    //     falseHexX = toHexX
-    //     falseHexY = toHexY
-    //     timerFalseHex = TIMEFALSEHEX
-    //     console.log('TFH')
-    //     return
-    // }
+    if(!canThisUnitGoToThisHex(hexX, hexY, toHexX, toHexY, dist)){
+        falseHexX = toHexX
+        falseHexY = toHexY
+        timerFalseHex = TIMEFALSEHEX
+        console.log('TFH')
+        return
+    }
    
     resultPath = []
     resultCountOfEnemy = -1
