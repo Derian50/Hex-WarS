@@ -61,7 +61,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('updateInfoAboutGame', function(data){
 		console.log('updateInfoAboutGame')
 		gamesData = data
-		io.sockets.emit('sentInfoAboutGame', gamesData)
+		socket.broadcast.emit('sentInfoAboutGame', gamesData)
 	})
 	socket.on('startGame', function(lobbyesInfo, roomsInfo){
 		var destroyInfoAboutSockets = null
