@@ -345,7 +345,6 @@ var updateVisible = function(){
     for(var i = 0; i < units.length; i++){
         visibleDist = 2
         if(units[i].side !== yourSide) continue
-        console.log(hexArr[units[i].hexX][units[i].hexY])
         if(hexArr[units[i].hexX][units[i].hexY].groundType == 'hill') visibleDist = 3
         var x = units[i].hexX
         var y = units[i].hexY
@@ -529,7 +528,6 @@ var getFoodCost = function(unitType){
     }
 }
 var buildUnit = function(){
-    console.log(buildUnitHexY, buildUnitHexY*48+32)
     units.push({
         id: idCount++,
         type: whatBuildUnit,
@@ -558,7 +556,6 @@ var buildUnit = function(){
     activeType = null
     activeHexX = -1
     activeHexY = -1
-    console.log(units)
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])
@@ -568,12 +565,10 @@ var buildUnit = function(){
 }
 var wantBuildUnit = function(unitType){
     
-    console.log('Хочу построить ', unitType)
     wantToBuildUnit = true
     whatBuildUnit = unitType
 }
 var wantBuildStructure = function(structureType){
-    console.log('Хочу построить ', structureType)
     wantToBuildStructure = true
     whatBuildStructure = structureType
 
@@ -1526,13 +1521,13 @@ var canThisUnitGoToThisHex = function(currentHexX, currentHexY, toHexX, toHexY, 
 }
 var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
     unitIndex = whatIsUnitIndex(hexX, hexY)
-    if(!canThisUnitGoToThisHex(hexX, hexY, toHexX, toHexY, dist)){
-        falseHexX = toHexX
-        falseHexY = toHexY
-        timerFalseHex = TIMEFALSEHEX
-        console.log('TFH')
-        return
-    }
+    // if(!canThisUnitGoToThisHex(hexX, hexY, toHexX, toHexY, dist)){
+    //     falseHexX = toHexX
+    //     falseHexY = toHexY
+    //     timerFalseHex = TIMEFALSEHEX
+    //     console.log('TFH')
+    //     return
+    // }
    
     resultPath = []
     resultCountOfEnemy = -1
@@ -1952,7 +1947,6 @@ var checkCollision = function(unitWhoEat){
 }
 var renderBattery = function(){
     for(var i = 0; i < builds.length; i++){
-        console.log(builds[i].hexX, builds[i].hexY)
         if(!hexArr[builds[i].hexX][builds[i].hexY].visible) continue
         if(builds[i].type === 'C'){
             var t = 600/builds[i].speed
@@ -2191,7 +2185,6 @@ var updateInfoAboutBuild = function(){
 var whatCanBuild = function(){
     canMakeUnit = []
     canMakeBuild = []
-    console.log(activeType)
     if(activeType == 'build'){
         for(var i = 0; i < builds.length; i++){
             
