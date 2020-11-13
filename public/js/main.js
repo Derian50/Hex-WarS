@@ -287,11 +287,19 @@ var updateInfoAboutGame = function(data){
     // builds = data[2]
     // arrows = data[3]
     switch(data[0]){
-        case 'moveUnit': //currentHexX, currentHexY, toHexX, toHexY, dist, side
-            var t = yourSide
-            yourSide = data[6]
-            createMovePath(data[1], data[2], data[3], data[4], data[5], data[6])
-            yourSide = t
+        case 'moveUnit': //units.id, stepToX[], stepToY[]
+            for(var i = 0; i < units.length; i++){
+                
+                if(units[i].id == data[1]){
+                    units[i].stepToX = data[2].slice()
+                    units[i].stepToY = data[3].slice()
+                    units[i].move = true
+                    units[i].cooldown += dist*600/units[i].speed
+                    units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
+                    units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
+                    units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
+                }
+            }
             break
         case 'killUnit': //units.id
             for(var i = 0; i < units.length; i++){
@@ -784,7 +792,7 @@ var meleeMoveOrAttack = function(currentHexX, currentHexY, x, y){
         activeHexX = -1
         activeHexY = -1
         activeType = null
-        socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
+        
         createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitsIndex].active = true
@@ -1079,7 +1087,6 @@ var whatIsDirection = function(currentHexX, currentHexY, toHexX, toHexY){
 }
 
 var doSomethingWithClick = function(arrXY){ 
-    console.log('0')
     
     x = arrXY[0]
     y = arrXY[1]
@@ -1092,7 +1099,6 @@ var doSomethingWithClick = function(arrXY){
         return
     }
     if((activeHexX === x && activeHexY === y) || x < 0 || y < 0){
-        console.log('1')
         if(activeType === 'build'){
             builds[whatIsBuildIndex(activeHexX,activeHexY)].active = false
         }else if(activeType === 'unit'){
@@ -1104,7 +1110,7 @@ var doSomethingWithClick = function(arrXY){
         return
     }
     if(isUnitsInThisHex(x,y) && units[whatIsUnitIndex(x,y)].side === yourSide && units[whatIsUnitIndex(x,y)].canMove && units[whatIsUnitIndex(x,y)].move === false){
-        console.log('2')
+        
         if(activeHexX !== -1){   
             if(activeType === 'build'){
                 builds[whatIsBuildIndex(activeHexX,activeHexY)].active = false
@@ -1118,7 +1124,7 @@ var doSomethingWithClick = function(arrXY){
         activeHexY = y
         
     }else if(isBuildsInThisHex(x,y) && builds[whatIsBuildIndex(x,y)].side === yourSide && (!builds[whatIsBuildIndex(x,y)].makeUnit || builds[whatIsBuildIndex(x,y)].canAttack)){
-        console.log('3')
+        
         if(activeHexX !== -1){      
             if(activeType === 'build'){
                 builds[whatIsBuildIndex(activeHexX,activeHexY)].active = false
@@ -1132,7 +1138,7 @@ var doSomethingWithClick = function(arrXY){
         activeHexY = y
 
     }else if(activeHexX !== -1 && activeHexY !== -1 && !isUnitsInThisHex(x,y) && !isBuildsInThisHex(x,y)){
-        console.log('4')
+        
           
         if(activeType === 'build'){
             builds[whatIsBuildIndex(activeHexX,activeHexY)].active = false            
@@ -1145,7 +1151,7 @@ var doSomethingWithClick = function(arrXY){
             console.log('Обновляю инфу об игре')
             //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         }else if(activeType === 'unit'){
-            console.log('moveunit')
+            
             units[whatIsUnitIndex(activeHexX,activeHexY)].active = false
             activeType = null
             if(units[whatIsUnitIndex(activeHexX, activeHexY)].type === 'A' || units[whatIsUnitIndex(activeHexX, activeHexY)].type === 'R' || units[whatIsUnitIndex(activeHexX, activeHexY)].type === 'D'){
@@ -1160,7 +1166,7 @@ var doSomethingWithClick = function(arrXY){
             //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         }
     }else{
-        console.log('5')
+        
     }
     
 }
@@ -1435,7 +1441,6 @@ var canThisUnitSeeThisHex = function(unitX, unitY, hexX, hexY){
     if(unitX == hexX && unitY == hexY) return true
     for(var i = 2; i < 8; i++){
         if(arrPaths[i][0] < 0 || arrPaths[i][1] < 0) continue
-        console.log(unitX, unitY)
         if(hexArr[unitX][unitY].groundType == 'hill'){
             if(hexArr[arrPaths[i][0]][arrPaths[i][1]].groundType == 'mountain'){
                 if(toHexX == arrPaths[i][0] && toHexY == arrPaths[i][1]){
@@ -1730,6 +1735,7 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         
 }
 var sentUnit = function(toHexX, toHexY, dist){
+    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY])
     units[unitIndex].move = true
     units[unitIndex].globalToX = toHexX
     units[unitIndex].globalToY = toHexY
