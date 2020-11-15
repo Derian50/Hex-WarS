@@ -287,7 +287,7 @@ var updateInfoAboutGame = function(data){
     // builds = data[2]
     // arrows = data[3]
     switch(data[0]){
-        case 'moveUnit': //units.id, stepToX[], stepToY[]
+        case 'moveUnit': //units.id, stepToX[], stepToY[], dist
             for(var i = 0; i < units.length; i++){
                 
                 if(units[i].id == data[1]){
@@ -295,7 +295,7 @@ var updateInfoAboutGame = function(data){
                     units[i].stepToX = data[2].slice()
                     units[i].stepToY = data[3].slice()
                     units[i].move = true
-                    units[i].cooldown += dist*600/units[i].speed
+                    units[i].cooldown += data[4]*600/units[i].speed
                     units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
                     units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
                     units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
@@ -308,6 +308,7 @@ var updateInfoAboutGame = function(data){
                     eatUnit(i)
                 }
             }
+            updateVisible()
             break
         case 'killBuild': //builds.id
         for(var i = 0; i < units.length; i++){
@@ -315,13 +316,15 @@ var updateInfoAboutGame = function(data){
                 builds.splice(i, 1)
             }
         }
+        updateVisible()
             break
         case 'killArrow': //arrows.id
         for(var i = 0; i < arrows.length; i++){
             if(data[1] == arrows[i].id){
                 arrows.splice(i, 1)
-            }
+            }  
         }
+            updateVisible()
             break
         case 'createUnit': //hexX, hexY, unitType, side
             buildUnitHexX = data[1]
@@ -845,7 +848,7 @@ var WMove = function(currentHexX, currentHexY, x, y){
         activeHexX = -1
         activeHexY = -1
         console.log('Рабочий полетел')
-        socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
+        //socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
         createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitIndex].active = true
@@ -914,7 +917,7 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         activeType = null
         activeHexX = -1
         activeHexY = -1
-        socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
+        //socket.emit('updateInfoAboutGame', ['moveUnit', currentHexX, currentHexY, x, y, dist])
         createMovePath(currentHexX, currentHexY, x, y, dist, yourSide)
     }else{
         units[unitIndex].active = true
@@ -1738,7 +1741,7 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         
 }
 var sentUnit = function(toHexX, toHexY, dist){
-    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY])
+    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
     units[unitIndex].move = true
     units[unitIndex].globalToX = toHexX
     units[unitIndex].globalToY = toHexY
