@@ -341,6 +341,14 @@ var updateInfoAboutGame = function(data){
             buildStructure()
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
+            console.log('Он стреляет! ')
+            if(isCastleInThisHex(data[1], data[2]){
+                builds[whatIsBuildIndex(data[1], data[2])].cooldownAttack = 600
+                builds[whatIsBuildIndex(data[1], data[2])].inCooldown = true
+            }else{
+                units[whatIsUnitIndex(data[1],data[2])].inCooldown = true
+                units[whatIsUnitIndex(data[1],data[2])].cooldown += (600/data[6].speed)
+            }
             createArrowAndShot(data[1], data[2], data[3], data[4], data[5], data[6], data[7])
             break
     }
@@ -770,7 +778,7 @@ var castleAttack = function(currentHexX, currentHexY, x, y){
         if(dist <= 3 && !builds[whatIsBuildIndex(currentHexX, currentHexY)].inCooldown){
             builds[whatIsBuildIndex(currentHexX, currentHexY)].cooldownAttack = 600
             builds[whatIsBuildIndex(currentHexX, currentHexY)].inCooldown = true
-            socket.emit("createArrow", [currentHexX, currentHexY, x, y, dist, 3, 'justArrow'])
+            socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, 3, 'justArrow'])
             createArrowAndShot(currentHexX, currentHexY, x, y, dist, 3, 'justArrow')
             activeType = null
             activeHexX = -1
@@ -823,6 +831,7 @@ var createArrowAndShot = function(currentHexX, currentHexY, toHexX, toHexY, dist
         }
         dist = 3
     }
+    console.log('createArrow')
     index = arrows.length
     arrows.push({})
     arrows[index].id = index
@@ -842,7 +851,7 @@ var createArrowAndShot = function(currentHexX, currentHexY, toHexX, toHexY, dist
 var WMove = function(currentHexX, currentHexY, x, y){
     var dist = checkDist(currentHexX, currentHexY, x, y)
     var unitIndex = whatIsUnitIndex(currentHexX, currentHexY)
-    if(canThisUnitGoToThisHex(currentHexX, currentHexY, x, y, dist) && !isEnemyInThisHex(x,y)){
+    if(canThisUnitGoToThisHex(currentHexX, currentHexY, x, y, dist) && !isEnemyInThisHex(x,y) && !isCastleInThisHex(x,y)){
         units[unitIndex].active = false
         activeType = null
         activeHexX = -1
@@ -898,10 +907,11 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
             units[unitIndex].cooldown += (600/units[unitIndex].speed)
             console.log('RANGER ATTACK')
             if(units[unitIndex].type == 'A' || units[unitIndex].type == 'D'){
-                socket.emit("createArrow", [currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
+                console.log('Внимание, стреляю!')
+                socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow')
             } else if(units[unitIndex].type == 'R'){
-                socket.emit("createArrow", [currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow'])
+                socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow')
             }
         }
@@ -1944,6 +1954,7 @@ var checkCollision = function(unitWhoEat){
         for(var i = 0; i < builds.length; i++){
             console.log(unitWhoEat, units[unitWhoEat])
             console.log(units)
+            if(units.length < unitWhoEat) return
             if(units[unitWhoEat].hexX === builds[i].hexX && units[unitWhoEat].hexY === builds[i].hexY &&  units[unitWhoEat].side !== builds[i].side){
                 fightVsStructure(unitWhoEat, i)
             }
@@ -2009,7 +2020,9 @@ var checkFalseHex = function(){
     }
 }
 var moveAndCheckArrows = function(){
+    
     for(var i = 0; i < arrows.length; i++){
+        console.log(arrows)
         arrows[i].x += arrows[i].stepX
         arrows[i].y += arrows[i].stepY
         
@@ -2022,7 +2035,7 @@ var moveAndCheckArrows = function(){
             }
         }
         if(arrows[i].toX === Math.round(arrows[i].x) && arrows[i].toY === Math.round(arrows[i].y)){
-            if(isEnemyInThisHex(arrows[i].toHexX, arrows[i].toHexY)){
+            if(isEnemyInThisHex(arrows[i].toHexX, arrows[i].toHexY) || isUnitsInThisHex(arrows[i].toHexX, arrows[i].toHexY)){
                 if(arrows[i].speed > 2){
                     eatUnit(whatIsUnitIndex(arrows[i].toHexX, arrows[i].toHexY))
                 }else{
