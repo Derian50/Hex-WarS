@@ -291,6 +291,7 @@ var updateInfoAboutGame = function(data){
             for(var i = 0; i < units.length; i++){
                 
                 if(units[i].id == data[1]){
+                    console.log(data)
                     units[i].stepToX = data[2].slice()
                     units[i].stepToY = data[3].slice()
                     units[i].move = true
@@ -489,9 +490,7 @@ var buildStructure = function(){
     if(yourSide == 'Red' && redIsVirgin){
         redIsVirgin = false
     }
-    activeType = null
-    activeHexX = -1
-    activeHexY = -1
+    
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
@@ -564,9 +563,7 @@ var buildUnit = function(){
         cooldown: null,
         progressRes: 0
     })
-    activeType = null
-    activeHexX = -1
-    activeHexY = -1
+    
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])
@@ -706,6 +703,9 @@ window.onmousedown = function(e){
         socket.emit('updateInfoAboutGame', ['createBuild', buildStructureHexX, buildStructureHexY, whatBuildStructure, yourSide])
         buildStructureSide = yourSide
         buildStructure()
+        activeType = null
+        activeHexX = -1
+        activeHexY = -1
         return
     }else if(wantToBuildUnit && canBuild(XY[0], XY[1])){
         builds[whatIsBuildIndex(activeHexX, activeHexY)].active = false
@@ -714,6 +714,9 @@ window.onmousedown = function(e){
         socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit, yourSide])
         buildUnitSide = yourSide
         buildUnit()
+        activeType = null
+        activeHexX = -1
+        activeHexY = -1
         return
     }
 
@@ -2405,6 +2408,7 @@ var checkActive = function(){
             return
         }
     }
+    console.log('Сброс')
     activeHexX = -1
     activeHexY = -1
 }
