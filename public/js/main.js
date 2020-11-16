@@ -311,19 +311,19 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'killBuild': //builds.id
-        for(var i = 0; i < units.length; i++){
-            if(data[1] == units[i].id){
-                builds.splice(i, 1)
+            for(var i = 0; i < units.length; i++){
+                if(data[1] == units[i].id){
+                    builds.splice(i, 1)
+                }
             }
-        }
-        updateVisible()
+            updateVisible()
             break
         case 'killArrow': //arrows.id
-        for(var i = 0; i < arrows.length; i++){
-            if(data[1] == arrows[i].id){
-                arrows.splice(i, 1)
-            }  
-        }
+            for(var i = 0; i < arrows.length; i++){
+                if(data[1] == arrows[i].id){
+                    arrows.splice(i, 1)
+                }  
+            }
             updateVisible()
             break
         case 'createUnit': //hexX, hexY, unitType, side
@@ -342,7 +342,7 @@ var updateInfoAboutGame = function(data){
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
             console.log('Он стреляет! ')
-            if(isCastleInThisHex(data[1], data[2]){
+            if(isCastleInThisHex(data[1], data[2])){
                 builds[whatIsBuildIndex(data[1], data[2])].cooldownAttack = 600
                 builds[whatIsBuildIndex(data[1], data[2])].inCooldown = true
             }else{
@@ -351,8 +351,8 @@ var updateInfoAboutGame = function(data){
             }
             createArrowAndShot(data[1], data[2], data[3], data[4], data[5], data[6], data[7])
             break
+        }
     }
-}
 var updateVisible = function(){
     for(var i = 0; i < HEXWIDTH; i++){
         for(var j = 0; j < HEXHEIGHT; j++){
