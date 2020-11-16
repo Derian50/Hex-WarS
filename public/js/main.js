@@ -1952,9 +1952,10 @@ var checkCollision = function(unitWhoEat){
                 }
         }
         for(var i = 0; i < builds.length; i++){
+            if(units.length < unitWhoEat) return
             console.log(unitWhoEat, units[unitWhoEat])
             console.log(units)
-            if(units.length < unitWhoEat) return
+            console.log(builds)
             if(units[unitWhoEat].hexX === builds[i].hexX && units[unitWhoEat].hexY === builds[i].hexY &&  units[unitWhoEat].side !== builds[i].side){
                 fightVsStructure(unitWhoEat, i)
             }
