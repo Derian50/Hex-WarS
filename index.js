@@ -209,8 +209,12 @@ io.sockets.on('connection', function(socket) {
 
 	var leave = function(roomId){
 		for(var i = 0; i < roomsData.length; i++){
-			if(roomId == roomsData[i][0]){					
-				for(var j = 0; j < roomsDataAboutSockets[i].length; j++){				
+			console.log('1..')
+			console.log(roomId, roomsData)
+			if(roomId == roomsData[i][0]){		
+				console.log('2..')			
+				for(var j = 0; j < roomsDataAboutSockets[i].length; j++){	
+					console.log('3..')			
 					if(roomsDataAboutSockets[i][j].id == socket.id){
 						console.log('Ливай нахуй')
 						roomsData[i][2]--
@@ -248,6 +252,7 @@ io.sockets.on('connection', function(socket) {
 		io.sockets.emit('setRoomsData', roomsData, countGames)
 	}
 	socket.on('playerLeave', function(roomId){
+		console.log('Готовься ливать нахуй')
 		leave(roomId)
 	})
 		// Функция, которая срабатывает при отключении от сервера

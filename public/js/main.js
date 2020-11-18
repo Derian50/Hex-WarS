@@ -326,19 +326,19 @@ var updateInfoAboutGame = function(data){
             }
             updateVisible()
             break
-        case 'createUnit': //hexX, hexY, unitType, side
-            buildUnitHexX = data[1]
-            buildUnitHexY = data[2]
-            whatBuildUnit = data[3]
-            buildUnitSide = data[4]
-            buildUnit()
+        case 'createUnit': //id, hexX, hexY, unitType, side
+            buildUnitHexX = data[2]
+            buildUnitHexY = data[3]
+            whatBuildUnit = data[4]
+            buildUnitSide = data[5]
+            buildUnit(data[1])
             break
-        case 'createBuild': //hexX, hexY, structureType, side
-            buildStructureHexX = data[1]
-            buildStructureHexY = data[2]
-            whatBuildStructure = data[3]
-            buildStructureSide = data[4]
-            buildStructure()
+        case 'createBuild': //id, hexX, hexY, structureType, side
+            buildStructureHexX = data[2]
+            buildStructureHexY = data[3]
+            whatBuildStructure = data[4]
+            buildStructureSide = data[5]
+            buildStructure(data[1])
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
             console.log('Он стреляет! ')
@@ -475,7 +475,12 @@ var getWoodCost = function(structureType){
 
     }
 }
-var buildStructure = function(){
+var buildStructure = function(id){
+    if(idCount == id){
+        console.log('Всё ок, айдишники сходятся')
+    }else{
+        console.log('Нихуя не ок, айдишники не сходятся')
+    }
     builds.push({
         id: idCount++,
         type: whatBuildStructure,
@@ -548,7 +553,12 @@ var getFoodCost = function(unitType){
             return 10
     }
 }
-var buildUnit = function(){
+var buildUnit = function(id){
+    if(idCount == id){
+        console.log('Всё ок, айдишники сходятся')
+    }else{
+        console.log('Нихуя не ок, айдишники не сходятся')
+    }
     units.push({
         id: idCount++,
         type: whatBuildUnit,
@@ -711,7 +721,7 @@ window.onmousedown = function(e){
         units[whatIsUnitIndex(activeHexX, activeHexY)].active = false
         wood -= getWoodCost(whatBuildStructure)
         
-        socket.emit('updateInfoAboutGame', ['createBuild', buildStructureHexX, buildStructureHexY, whatBuildStructure, yourSide])
+        socket.emit('updateInfoAboutGame', ['createBuild', idCount, buildStructureHexX, buildStructureHexY, whatBuildStructure, yourSide])
         buildStructureSide = yourSide
         buildStructure()
         activeType = null
@@ -722,7 +732,7 @@ window.onmousedown = function(e){
         builds[whatIsBuildIndex(activeHexX, activeHexY)].active = false
         food -= getFoodCost(whatBuildUnit)
         
-        socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit, yourSide])
+        socket.emit('updateInfoAboutGame', ['createUnit', idCount, buildUnitHexX, buildUnitHexY, whatBuildUnit, yourSide])
         buildUnitSide = yourSide
         buildUnit()
         activeType = null
@@ -1940,7 +1950,7 @@ var fightVsStructure = function(unit, structure){
 }
 var checkCollision = function(unitWhoEat){
         for(var i = 0; i < units.length; i++){
-                if(units[unitWhoEat].hexX === units[i].hexX && units[unitWhoEat].hexY === units[i].hexY && !units[i].move && units[unitWhoEat].side !== units[i].side){
+                if(units[unitWhoEat].hexX === units[i].hexX && units[unitWhoEat].hexY === units[i].hexY && units[unitWhoEat].side !== units[i].side){
                     console.log('Бой между ', unitWhoEat, i)
                     console.log('До')
                     console.log(units)

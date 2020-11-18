@@ -64,6 +64,7 @@ document.onclick = function(e){
     if(teamDiv){
         
         var roomId = -1
+        console.log(lobbyesData)
         roomId = lobbyesData[0][0]
         var roomsIndex = -1
         for(var i = 0; i < roomsData.length; i++){
@@ -104,8 +105,8 @@ startGameButton.onclick = function(){
     
 }
 var checkStartGame = function(lobbyesInfo, roomsInfo){
-    if(infoAboutGame[6] == roomsInfo[6]){
-            if(roomsInfo[2] == roomsInfo[3]){
+    if(roomsInfo[2] == roomsInfo[3]){
+            if(infoAboutGame[6] == roomsInfo[6] || infoAboutGame.host == roomsInfo[6]){
                 startGameButton.className = 'btn btn-secondary btn-lg'
             }else{
                 startGameButton.className = 'btn btn-secondary btn-lg d-none'
@@ -137,14 +138,16 @@ var setTeamsInfo = function(roomId){
     console.log(roomsData, index, roomId)
     var count = howMuchCanBeTeams(roomsData[index])
     if(count > 10) count = 10
-    
     var teamDiv = document.getElementById('teamDiv')
-    for(var i = 0; i < 10; i++){
-        teamDiv.childNodes[i].className = "dropdown-item d-none"
+    if(teamDiv){
+        for(var i = 0; i < count; i++){
+            teamDiv.childNodes[i].className = "dropdown-item d-none"
+        }
+        for(var i = 0; i < count; i++){
+            teamDiv.childNodes[i].className = "dropdown-item"
+        }
     }
-    for(var i = 0; i < count; i++){
-        teamDiv.childNodes[i].className = "dropdown-item"
-    }
+    
 }
 var howMuchCanBeTeams = function(roomInfo){
     console.log(roomInfo)
@@ -236,7 +239,7 @@ var countGames = 0
 var roomsData = []
 var lobbyesData = [] //
 //[айдишник комнаты, хост или нет, имя, команда, цвет]
-var selectedRoomId = 0
+var selectedRoomId = -1
 
 socket.emit('pageIsLoad')
 socket.on('setRoomsData', function(myRoomsData, gamesCount){
@@ -651,6 +654,7 @@ var getFreeTeamNumber = function(selectedRoomId){
 }
 
 var makeGame = function(){
+    selectedRoomId = countGames
     
     if(infoAboutGame.name.length > 16){
         infoAboutGame.name = infoAboutGame.name.slice(0, 16)
