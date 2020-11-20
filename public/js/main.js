@@ -70,7 +70,7 @@ var TOPMENUSIZE = 64
 var activeHexX = -1, activeHexY = -1, activeType = null
 var falseHexX = -1, falseHexY = -1, timerFalseHex = -1
 var TIMEFALSEHEX = 5
-var mapEditor = false
+var mapEditor = true
 var currentEditorColor = 'rgb(147, 200, 83)'
 var currentEditorColorName = 'plain'
 var startXforBlue = 5
@@ -311,8 +311,8 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'killBuild': //builds.id
-            for(var i = 0; i < units.length; i++){
-                if(data[1] == units[i].id){
+            for(var i = 0; i < builds.length; i++){
+                if(data[1] == builds[i].id){
                     builds.splice(i, 1)
                 }
             }
@@ -359,6 +359,7 @@ var updateVisible = function(){
             if((i%2) == (j%2)){
                 if(mapEditor){
                     hexArr[i][j].visible = true
+                    hexArr[i][j].explored = true
                 }else{
                     hexArr[i][j].visible = false
                 }
@@ -444,6 +445,9 @@ var drawHex = function(){
     for(var i = 0; i < HEXWIDTH; i++){
         for(var j = 0; j < HEXHEIGHT; j++){
             if((i%2) === (j%2)){        
+
+
+
                 if(!hexArr[i][j].visible){
                     ctx.drawImage(mistHex, 32*i, 48*j)
                 }else if(hexArr[i][j].groundType == 'plain'){
@@ -1935,7 +1939,9 @@ var eatUnit = function(index){
 
 }
 var fightVsStructure = function(unit, structure){
+    
     if(builds[structure].type == 'C'){
+        console.log('Умирает здание и юнит')
         socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
         socket.emit('updateInfoAboutGame', ['killUnit', units[unit].id])
         builds.splice(structure, 1)
@@ -1951,6 +1957,9 @@ var fightVsStructure = function(unit, structure){
 }
 var checkCollision = function(unitWhoEat){
         for(var i = 0; i < units.length; i++){
+            
+            console.log(unitWhoEat, units[unitWhoEat])
+            console.log(units)
                 if(units[unitWhoEat].hexX === units[i].hexX && units[unitWhoEat].hexY === units[i].hexY && units[unitWhoEat].side !== units[i].side){
                     console.log('Бой между ', unitWhoEat, i)
                     console.log('До')
@@ -1963,7 +1972,6 @@ var checkCollision = function(unitWhoEat){
                 }
         }
         for(var i = 0; i < builds.length; i++){
-            if(units.length <= unitWhoEat) return
             console.log(unitWhoEat, units[unitWhoEat])
             console.log(units)
             console.log(builds)
