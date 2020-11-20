@@ -554,6 +554,7 @@ var getFoodCost = function(unitType){
     }
 }
 var buildUnit = function(id){
+    console.log(idCount, id)
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
     }else{
@@ -734,7 +735,7 @@ window.onmousedown = function(e){
         
         socket.emit('updateInfoAboutGame', ['createUnit', idCount, buildUnitHexX, buildUnitHexY, whatBuildUnit, yourSide])
         buildUnitSide = yourSide
-        buildUnit()
+        buildUnit(idCount)
         activeType = null
         activeHexX = -1
         activeHexY = -1
