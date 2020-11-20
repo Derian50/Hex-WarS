@@ -1963,7 +1963,7 @@ var checkCollision = function(unitWhoEat){
                 }
         }
         for(var i = 0; i < builds.length; i++){
-            if(units.length < unitWhoEat) return
+            if(units.length <= unitWhoEat) return
             console.log(unitWhoEat, units[unitWhoEat])
             console.log(units)
             console.log(builds)
