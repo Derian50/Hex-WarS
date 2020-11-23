@@ -70,7 +70,7 @@ var TOPMENUSIZE = 64
 var activeHexX = -1, activeHexY = -1, activeType = null
 var falseHexX = -1, falseHexY = -1, timerFalseHex = -1
 var TIMEFALSEHEX = 5
-var mapEditor = true
+var mapEditor = false
 var currentEditorColor = 'rgb(147, 200, 83)'
 var currentEditorColorName = 'plain'
 var startXforBlue = 14
