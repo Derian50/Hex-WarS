@@ -1977,6 +1977,7 @@ var checkCollision = function(unitWhoEat){
             console.log(builds)
             if(units[unitWhoEat].hexX === builds[i].hexX && units[unitWhoEat].hexY === builds[i].hexY &&  units[unitWhoEat].side !== builds[i].side){
                 fightVsStructure(unitWhoEat, i)
+                return
             }
         }
             // if(units[i].move){
