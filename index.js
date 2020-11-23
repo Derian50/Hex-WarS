@@ -48,7 +48,7 @@ io.sockets.on('connection', function(socket) {
 			for(var j = 1; j < roomsDataAboutSockets[i].length; j++){
 				console.log(roomsDataAboutSockets)
 				console.log(j)
-				socket.emit('setSide', j-1)
+				socket.to(roomsDataAboutSockets[i][j].id).emit('setSide', j-1)
 			}
 		}
 		
