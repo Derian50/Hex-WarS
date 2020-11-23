@@ -46,7 +46,9 @@ io.sockets.on('connection', function(socket) {
 		console.log('Он хочет узнать свою сторону!')
 		for(var i = 0; i < roomsDataAboutSockets.length; i++){
 			for(var j = 1; j < roomsDataAboutSockets[i].length; j++){
-				socket.to(roomsDataAboutSockets[i][j].id).emit('setSide', j-1)
+				console.log(roomsDataAboutSockets)
+				console.log(j)
+				socket.emit('setSide', j-1)
 			}
 		}
 		
