@@ -264,7 +264,7 @@ socket.emit('getSide')
 socket.on('setSide', function(data){
     console.log('SIDE — ', yourSide)
     console.log(data)
-    switch(data){
+    switch(data%2){
         case 0:
             yourSide = 'Blue'
             break
