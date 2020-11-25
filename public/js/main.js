@@ -1,57 +1,41 @@
-
 var cvs = document.getElementById('canvas')
 var ctx = cvs.getContext("2d")
 var width = 1600,
     height = 900
 cvs.width = width
 cvs.height = height
-
 var menucvs = document.getElementById('menuCanvas')
 var menuctx = menucvs.getContext('2d')
 menucvs.width = width
 menucvs.height = 84
-
 var canBuildHex = new Image()
 canBuildHex.src = 'assets/canBuildHex.png'
-
 var emptyHex = new Image()
 emptyHex.src = 'assets/emptyHex.png'
-
 var falseHex = new Image()
 falseHex.src = 'assets/FalseHex.png'
-
 var mistHex = new Image()
 mistHex.src = 'assets/mistHex.png'
-
 var plainHex = new Image()
 plainHex.src = 'assets/plainHex.png'
-
 var forestHex = new Image()
 forestHex.src = 'assets/forestHex.png'
-
 var beachHex = new Image()
 beachHex.src = 'assets/beachHex.png'
-
 var hillHex = new Image()
 hillHex.src = 'assets/hillHex.png'
-
 var mountainHex = new Image()
 mountainHex.src = 'assets/mountainHex.png'
-
 var waterHex = new Image()
 waterHex.src = 'assets/waterHex.png'
-
-
 var wantToBuildStructure = false
 var whatBuildStructure = ''
 var buildStructureHexX = null
 var buildStructureHexY = null
-
 var wantToBuildUnit = false
 var whatBuildUnit = ''
 var buildUnitHexX = null
 var buildUnitHexY = null
-
 var currentMouseX = 0
 var currentMouseY = 0
 var wood = 100
@@ -80,10 +64,9 @@ var startYforRed = 8
 var blueIsVirgin = true
 var redIsVirgin = true
 var idCount = 1
-var buildUnitSide = null
+var tempBuildStructure = null
 
 var arrows = [
-
 ]
 var builds = [
     // {
@@ -195,7 +178,6 @@ var builds = [
     //     cooldownAttack: null,
     //     canAttack: true
     // }
-
 ]
 var units = [
     {
@@ -250,8 +232,6 @@ var units = [
     }
     
 ]
-
-
 var gameStart = 0
 socket.emit('getMapInfo')
 socket.on('setMapInfo', function(newHexArr){
@@ -260,7 +240,6 @@ socket.on('setMapInfo', function(newHexArr){
     gameStart++
     if(gameStart >= 2) startGame()
 })
-
 socket.emit('getSide')
 socket.on('setSide', function(data){
     console.log('SIDE — ', yourSide)
@@ -288,32 +267,32 @@ var updateInfoAboutGame = function(data){
     // builds = data[2]
     // arrows = data[3]
     switch(data[0]){
-        case 'moveUnit': //hexX, hexY, side , stepToX[], stepToY[], dist
+        case 'moveUnit': //units.id, stepToX[], stepToY[], dist
             for(var i = 0; i < units.length; i++){
                 
-                if(data[1] == units[i].hexX && data[2] == units[i].hexY && data[3] == units[i].side){
+                if(units[i].id == data[1]){
                     console.log(data)
-                    units[i].stepToX = data[4].slice()
-                    units[i].stepToY = data[5].slice()
+                    units[i].stepToX = data[2].slice()
+                    units[i].stepToY = data[3].slice()
                     units[i].move = true
-                    units[i].cooldown += data[6]*600/units[i].speed
+                    units[i].cooldown += data[4]*600/units[i].speed
                     units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
                     units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
                     units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
                 }
             }
             break
-        case 'killUnit': //hexX, hexY, side 
+        case 'killUnit': //units.id
             for(var i = 0; i < units.length; i++){
-                if(data[1] == units[i].hexX && data[2] == units[i].hexY && data[3] == units[i].side){
+                if(data[1] == units[i].id){
                     eatUnit(i)
                 }
             }
             updateVisible()
             break
-        case 'killBuild': //hexX, hexY, side 
+        case 'killBuild': //builds.id
             for(var i = 0; i < builds.length; i++){
-                if(data[1] == builds[i].hexX && data[2] == builds[i].hexY && data[3] == builds[i].side){
+                if(data[1] == builds[i].id){
                     builds.splice(i, 1)
                 }
             }
@@ -328,20 +307,20 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'createUnit': //id, hexX, hexY, unitType, side
-            tArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
+            tempBuildUnit = whatBuildUnit
             buildUnitHexX = data[2]
             buildUnitHexY = data[3]
             whatBuildUnit = data[4]
             buildUnitSide = data[5]
-            buildUnit(data[1], tArr)
+            buildUnit(data[1])
             break
         case 'createBuild': //id, hexX, hexY, structureType, side
-            tArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
+            tempBuildStructure = whatBuildStructure
             buildStructureHexX = data[2]
             buildStructureHexY = data[3]
             whatBuildStructure = data[4]
             buildStructureSide = data[5]
-            buildStructure(data[1], tArr)
+            buildStructure(data[1])
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
             console.log('Он стреляет! ')
@@ -448,9 +427,6 @@ var drawHex = function(){
     for(var i = 0; i < HEXWIDTH; i++){
         for(var j = 0; j < HEXHEIGHT; j++){
             if((i%2) === (j%2)){        
-
-
-
                 if(!hexArr[i][j].visible){
                     ctx.drawImage(mistHex, 32*i, 48*j)
                 }else if(hexArr[i][j].groundType == 'plain'){
@@ -479,10 +455,9 @@ var getWoodCost = function(structureType){
             return 10
         default:
             return 20
-
     }
 }
-var buildStructure = function(id, data){
+var buildStructure = function(id){
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
     }else{
@@ -513,14 +488,9 @@ var buildStructure = function(id, data){
     if(yourSide == 'Red' && redIsVirgin){
         redIsVirgin = false
     }
-    if(data){
-        console.log('SHALOM')
-        buildStructureHexX = data[0]
-        buildStructureHexY = data[1]
-        whatBuildStructure = data[2]
-        buildStructureSide = data[3]
+    if(tempBuildStructure){
+        whatBuildStructure = tempBuildStructure
     }
-    
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
@@ -567,7 +537,7 @@ var getFoodCost = function(unitType){
             return 10
     }
 }
-var buildUnit = function(id, data){
+var buildUnit = function(id){
     console.log(idCount, id)
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
@@ -599,21 +569,13 @@ var buildUnit = function(id, data){
         cooldown: null,
         progressRes: 0
     })
-    if(data){
-        console.log('SHALOM')
-        buildUnitHexX = data[0]
-        buildUnitHexY = data[1]
-        whatBuildUnit = data[2]
-        buildUnitSide = data[3]
+    if(tempBuildUnit){
+        whatBuildUnit = tempBuildUnit
     }
-    
-
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
-
-
 }
 var wantBuildUnit = function(unitType){
     
@@ -623,7 +585,6 @@ var wantBuildUnit = function(unitType){
 var wantBuildStructure = function(structureType){
     wantToBuildStructure = true
     whatBuildStructure = structureType
-
 } 
 var canBuild = function(toHexX, toHexY){
     if(checkDist(activeHexX, activeHexY, toHexX, toHexY) == 1 && hexArr[toHexX][toHexY].groundType !== 'mountain'&& hexArr[toHexX][toHexY].groundType !== 'water' && !whatIsBuildIndex(toHexX, toHexY) && !whatIsUnitIndex(toHexX, toHexY)){
@@ -699,7 +660,6 @@ var clickOnMenu = function(x,y){
                 
                 
             }
-
             //Здесь надо вызвать функцию, которая строит здание или юнита
         }
     }
@@ -763,7 +723,6 @@ window.onmousedown = function(e){
         activeHexY = -1
         return
     }
-
     doSomethingWithClick(XY)
     
 }
@@ -970,10 +929,6 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         timerFalseHex = TIMEFALSEHEX
         console.log('TFH')
     }
-
-
-
-
 }
 var rangerCanAttack = function(currentHexX, currentHexY, toHexX, toHexY, dist, speed, dir, type){
     deltaX = toHexX - currentHexX
@@ -1050,43 +1005,9 @@ var rangerCanAttack = function(currentHexX, currentHexY, toHexX, toHexY, dist, s
             }
             
     }else if(dist == 3){
-
     }else if(dist == 4){
-
     }
     return true
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /* var deltaStepX = ((toHexX*32+32)-(currentHexX*32+32))/60
     var deltaStepY = ((toHexY*48+32)-(currentHexY*48+32))/60
     var stepX = speed/dist*deltaStepX/3
@@ -1134,7 +1055,6 @@ var whatIsDirection = function(currentHexX, currentHexY, toHexX, toHexY){
         return 'up-left'
     }
 }
-
 var doSomethingWithClick = function(arrXY){ 
     
     x = arrXY[0]
@@ -1142,7 +1062,6 @@ var doSomethingWithClick = function(arrXY){
     
     if((x + y) % 2 === 1) x--
     if(mapEditor){
-
         hexArr[x][y].groundType = currentEditorColorName
         socket.emit('editMapInfo', hexArr)
         return
@@ -1185,7 +1104,6 @@ var doSomethingWithClick = function(arrXY){
         activeType = 'build'
         activeHexX = x
         activeHexY = y
-
     }else if(activeHexX !== -1 && activeHexY !== -1 && !isUnitsInThisHex(x,y) && !isBuildsInThisHex(x,y)){
         
           
@@ -1211,7 +1129,6 @@ var doSomethingWithClick = function(arrXY){
                 WMove(activeHexX, activeHexY, x, y)
             }
             console.log('Обновляю инфу об игре')
-
             //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         }
     }else{
@@ -1241,7 +1158,6 @@ var whatHexIsClicked = function(x, y){
     x = x - col*32
     y = y - row*64 - 32*row
     row *= 2
-
     if((col % 2 === 1) && y <= 16){
         dir = 2
     }else if((col % 2 === 1) && y >= 48){
@@ -1306,7 +1222,6 @@ var checkDist = function(currentHexX, currentHexY, toHexX, toHexY){
     } else{
         q = Math.abs(currentHexX - toHexX) + Math.abs(currentHexY - toHexY)
     }
-
         q = Math.ceil(q/2)
         return q
     
@@ -1332,7 +1247,6 @@ var whatIsUnitIndex = function(hexX, hexY){
         }
     }
 }
-
 var makeNewStepInThePath = function(currentX, currentY, toHexX, toHexY, currentArrId, type){
     if(type == 'Range' || type == 'Melee'){
         unitIndex = whatIsUnitIndex(currentX, currentY)
@@ -1342,7 +1256,6 @@ var makeNewStepInThePath = function(currentX, currentY, toHexX, toHexY, currentA
         
         tstartX = currentX
         tstartY = currentY
-
         var tempFunc = function(arr){
             x = arr[0]
             y = arr[1]
@@ -1363,14 +1276,12 @@ var makeNewStepInThePath = function(currentX, currentY, toHexX, toHexY, currentA
                 tempArrPaths[i][j] = tempFunc([tempArrPaths[i][j][0], tempArrPaths[i][j][1]])
                 for(var k = 2; k < 8; k++){ // четвертый шаг      
                     tempArrPaths[i][j][k] = tempFunc([tempArrPaths[i][j][k][0], tempArrPaths[i][j][k][1]])
-
                 }
             }
         }
         return tempArrPaths
     }else{
 ///ааа
-
 ///ааа
     
         //Путин не смотри сюда
@@ -1560,7 +1471,6 @@ var canThisUnitSeeThisHex = function(unitX, unitY, hexX, hexY){
     }
     
     //aaa
-
 }
 var canThisUnitGoToThisHex = function(currentHexX, currentHexY, toHexX, toHexY, dist){
     unitIndex = whatIsUnitIndex(currentHexX, currentHexY)
@@ -1659,7 +1569,6 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         arrPaths = []
         arrPaths.push(result)
         resultArrIndex = 0
-
     }else if(units[whatIsUnitIndex(hexX, hexY)].type === 'C' || units[whatIsUnitIndex(hexX, hexY)].type === 'S' || units[whatIsUnitIndex(hexX, hexY)].type === 'P'){
         arrPaths = makeNewStepInThePath(currentX, currentY, toHexX, toHexY, 0, 'Melee')
         result = []
@@ -1752,7 +1661,6 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         arrPaths = []
         arrPaths.push(result)
         resultArrIndex = 0
-
         //resultArrIndex = -1
         /* console.log(arrPaths)
         console.log(arrPaths[0])
@@ -1784,14 +1692,13 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         
 }
 var sentUnit = function(toHexX, toHexY, dist){
-    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].hexX, units[unitIndex].hexY, units[unitIndex].side, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
+    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
     units[unitIndex].move = true
     units[unitIndex].globalToX = toHexX
     units[unitIndex].globalToY = toHexY
     units[unitIndex].cooldown += dist*600/units[unitIndex].speed
     units[unitIndex].direction = whatIsDirection(units[unitIndex].hexX, units[unitIndex].hexY, units[unitIndex].stepToX[0], units[unitIndex].stepToY[0])
 }
-
 var PEatEnemyIfCan = function(x, y){
     for(var i = 0; i < units.length; i++){
         if(units[i].hexX == x && units[i].hexY == y && units[i].side != yourSide){
@@ -1844,7 +1751,6 @@ var moveUnits = function(){
                 units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
                 checkCollision(i)
                 updateVisible()
-
                 
                 break
                 
@@ -1890,7 +1796,6 @@ var fight = function(unitIndexAttack, unitIndexDefend, isArrow){
     defenderDir = units[unitIndexDefend].direction
     attackerType = units[unitIndexAttack].type
     defenderType = units[unitIndexDefend].type
-
     if(
     (attackerDir == 'right' && defenderDir == 'left') ||
     (attackerDir == 'left' && defenderDir == 'right') ||
@@ -1918,7 +1823,6 @@ var fight = function(unitIndexAttack, unitIndexDefend, isArrow){
     }else{
         eatUnit(unitIndexAttack)
     }
-
 }
 var isAttackerWinInTheFight = function(chance){
     if(Math.random() < chance){
@@ -1948,27 +1852,24 @@ var getChanceToWin = function(typeAttack, attackerType, defenderType){
     return chance
 }
 var eatUnit = function(index){
-    socket.emit('updateInfoAboutGame', ['killUnit', units[index].hexX, units[index].hexY, units[index].side])
+    socket.emit('updateInfoAboutGame', ['killUnit', units[index].id])
     units.splice(index, 1)
     console.log('Обновляю инфу об игре')
-
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
-
 }
 var fightVsStructure = function(unit, structure){
     
     if(builds[structure].type == 'C'){
         console.log('Умирает здание и юнит')
-        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].hexX, builds[structure].hexY, builds[structure].side])
-        socket.emit('updateInfoAboutGame', ['killUnit', units[unit].hexX, units[unit].hexY, units[unit].side])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
+        socket.emit('updateInfoAboutGame', ['killUnit', units[unit].id])
         builds.splice(structure, 1)
         units.splice(unit, 1)
     }else{
-        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].hexX, builds[structure].hexY, builds[structure].side])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
         builds.splice(structure, 1)
     }
-
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
@@ -2031,7 +1932,6 @@ var renderBattery = function(){
             }
         }
     }
-
     for(var i = 0; i < units.length; i++){
         if(!hexArr[units[i].hexX][units[i].hexY].visible) continue
         var t = 600/units[i].speed
@@ -2182,23 +2082,18 @@ var renderUnits = function(){
             case 'right':
                 ctx.fillRect(units[i].x+12, units[i].y-2, 4, 4)
                 break;
-
             case 'left':
                 ctx.fillRect(units[i].x-18, units[i].y-2, 4, 4)
                 break;
-
             case 'down-right':
                 ctx.fillRect(units[i].x+10, units[i].y+10, 4, 4)
                 break;
-
             case 'down-left':
                 ctx.fillRect(units[i].x-14, units[i].y+14, 4, 4)
                 break;
-
             case 'up-right':
                 ctx.fillRect(units[i].x+10, units[i].y-14, 4, 4)
                 break;
-
             case 'up-left':
                 ctx.fillRect(units[i].x-14, units[i].y-14, 4, 4)
                 break;
@@ -2312,7 +2207,6 @@ var whatCanBuild = function(){
     }
     
 }
-
 var renderMenu = function(){
     menuctx.font = "bold 32px Courier"
     menuctx.fillStyle = 'rgb(0, 0, 0)'
@@ -2367,26 +2261,21 @@ var renderBuildStuctureAndUnit = function(){
                 case 0:
                     hexX -= 2
                     break
-
                 case 1:
                     hexX--
                     hexY--
                     break
-
                 case 2:
                     hexX++
                     hexY--
                     break
-
                 case 3:
                     hexX += 2
                     break
-
                 case 4:
                     hexX++
                     hexY++
                     break
-
                 case 5:
                     hexX--
                     hexY++
@@ -2472,7 +2361,6 @@ var checkActive = function(){
 var startGame = function(){
     //createArrs()
     
-
     //createHexArrs()
     createUnitsArr()
     createBuildsArr()
@@ -2502,8 +2390,6 @@ var mainLoop = function(){
     renderBuildStuctureAndUnit()
     checkFalseHex()
     checkActive()
-
     requestAnimationFrame(mainLoop)
 }
-
 console.log('Не понимаю что происходит, почему он не хочет находить изменения? Глупый git')
