@@ -65,7 +65,8 @@ var blueIsVirgin = true
 var redIsVirgin = true
 var idCount = 1
 var tempBuildStructure = null
-
+var activeKey = null
+var tempBuildUnit = null
 var arrows = [
 ]
 var builds = [
@@ -664,6 +665,84 @@ var clickOnMenu = function(x,y){
         }
     }
 }
+window.onkeydown = function(e){
+    activeKey = e.key
+    console.log(activeKey)
+    if(canMakeUnit.length > 0){
+        switch(activeKey){
+            case 'c':
+                if(canMakeUnit.includes('C')){
+                    wantBuildUnit('C')
+                }
+                break
+            case 'a':
+                if(canMakeUnit.includes('A')){
+                    wantBuildUnit('A')
+                }
+                break
+            case 'p':
+                if(canMakeUnit.includes('P')){
+                    wantBuildUnit('P')
+                }
+                break
+            case 's':
+                if(canMakeUnit.includes('S')){
+                    wantBuildUnit('S')
+                }
+                break
+            case 'r':
+                if(canMakeUnit.includes('R')){
+                    wantBuildUnit('R')
+                }
+                break
+            case 'd':
+                if(canMakeUnit.includes('D')){
+                    wantBuildUnit('D')
+                }
+                break
+            case 'w':
+                if(canMakeUnit.includes('W')){
+                    wantBuildUnit('W')
+                }
+                break
+            
+        }
+    }else if(canMakeBuild.length > 0){
+        switch(activeKey){
+            case "c":
+                    if(canMakeBuild.includes('C')){
+                        console.log('aloxa')
+                        wantBuildStructure('C')
+                    }
+                    break
+                case "b":
+                    if(canMakeBuild.includes('B')){
+                        wantBuildStructure('B')
+                    }
+                    break
+                case "r":
+                    if(canMakeBuild.includes('R')){
+                        wantBuildStructure('R')
+                    }
+                    break
+                case "s":
+                    if(canMakeBuild.includes('S')){
+                        wantBuildStructure('S')
+                    }
+                    break
+                case "h": 
+                    if(canMakeBuild.includes('H')){
+                        wantBuildStructure('H')
+                    }
+                    break
+        }
+    }
+    
+}
+window.onkeyup = function(e){
+    activeKey = null
+}
+
 window.onmousemove = function(e){
     if(e.clientY > 68){
         currentMouseX = e.layerX
