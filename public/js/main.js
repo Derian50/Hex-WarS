@@ -327,18 +327,20 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'createUnit': //id, hexX, hexY, unitType, side
+            tempArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
             buildUnitHexX = data[2]
             buildUnitHexY = data[3]
             whatBuildUnit = data[4]
             buildUnitSide = data[5]
-            buildUnit(data[1])
+            buildUnit(data[1], tempArr)
             break
         case 'createBuild': //id, hexX, hexY, structureType, side
+        tempArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
             buildStructureHexX = data[2]
             buildStructureHexY = data[3]
             whatBuildStructure = data[4]
             buildStructureSide = data[5]
-            buildStructure(data[1])
+            buildStructure(data[1], tempArr)
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
             console.log('Он стреляет! ')
@@ -479,7 +481,7 @@ var getWoodCost = function(structureType){
 
     }
 }
-var buildStructure = function(id){
+var buildStructure = function(id, data){
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
     }else{
@@ -510,7 +512,10 @@ var buildStructure = function(id){
     if(yourSide == 'Red' && redIsVirgin){
         redIsVirgin = false
     }
-    
+    buildStructureHexX = data[0]
+    buildStructureHexY = data[1]
+    whatBuildStructure = data[2]
+    buildStructureSide = data[3]
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
@@ -557,7 +562,7 @@ var getFoodCost = function(unitType){
             return 10
     }
 }
-var buildUnit = function(id){
+var buildUnit = function(id, data){
     console.log(idCount, id)
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
@@ -589,7 +594,12 @@ var buildUnit = function(id){
         cooldown: null,
         progressRes: 0
     })
-    
+
+    buildUnitHexX = data[0]
+    buildUnitHexY = data[1]
+    whatBuildUnit = data[2]
+    buildUnitSide = data[3]
+
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])
