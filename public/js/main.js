@@ -54,7 +54,7 @@ var TOPMENUSIZE = 64
 var activeHexX = -1, activeHexY = -1, activeType = null
 var falseHexX = -1, falseHexY = -1, timerFalseHex = -1
 var TIMEFALSEHEX = 5
-var mapEditor =false 
+var mapEditor = false 
 var currentEditorColor = 'rgb(147, 200, 83)'
 var currentEditorColorName = 'plain'
 var startXforBlue = 4
@@ -1956,8 +1956,6 @@ var fightVsStructure = function(unit, structure){
 var checkCollision = function(unitWhoEat){
         for(var i = 0; i < units.length; i++){
             
-            console.log(unitWhoEat, units[unitWhoEat])
-            console.log(units)
                 if(units[unitWhoEat].hexX === units[i].hexX && units[unitWhoEat].hexY === units[i].hexY && units[unitWhoEat].side !== units[i].side){
                     console.log('Бой между ', unitWhoEat, i)
                     console.log('До')
@@ -1970,9 +1968,6 @@ var checkCollision = function(unitWhoEat){
                 }
         }
         for(var i = 0; i < builds.length; i++){
-            console.log(unitWhoEat, units[unitWhoEat])
-            console.log(units)
-            console.log(builds)
             if(units[unitWhoEat].hexX === builds[i].hexX && units[unitWhoEat].hexY === builds[i].hexY &&  units[unitWhoEat].side !== builds[i].side){
                 fightVsStructure(unitWhoEat, i)
                 return
