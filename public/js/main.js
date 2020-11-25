@@ -327,20 +327,20 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'createUnit': //id, hexX, hexY, unitType, side
-            tempArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
+            tArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
             buildUnitHexX = data[2]
             buildUnitHexY = data[3]
             whatBuildUnit = data[4]
             buildUnitSide = data[5]
-            buildUnit(data[1], tempArr)
+            buildUnit(data[1], tArr)
             break
         case 'createBuild': //id, hexX, hexY, structureType, side
-        tempArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
+            tArr = [buildUnitHexX, buildUnitHexY, whatBuildUnit, buildUnitSide]
             buildStructureHexX = data[2]
             buildStructureHexY = data[3]
             whatBuildStructure = data[4]
             buildStructureSide = data[5]
-            buildStructure(data[1], tempArr)
+            buildStructure(data[1], tArr)
             break
         case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
             console.log('Он стреляет! ')
@@ -512,10 +512,14 @@ var buildStructure = function(id, data){
     if(yourSide == 'Red' && redIsVirgin){
         redIsVirgin = false
     }
-    buildStructureHexX = data[0]
-    buildStructureHexY = data[1]
-    whatBuildStructure = data[2]
-    buildStructureSide = data[3]
+    if(data){
+        console.log('SHALOM')
+        buildStructureHexX = data[0]
+        buildStructureHexY = data[1]
+        whatBuildStructure = data[2]
+        buildStructureSide = data[3]
+    }
+    
     updateVisible()
     console.log('Обновляю инфу об игре')
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
@@ -594,11 +598,14 @@ var buildUnit = function(id, data){
         cooldown: null,
         progressRes: 0
     })
-
-    buildUnitHexX = data[0]
-    buildUnitHexY = data[1]
-    whatBuildUnit = data[2]
-    buildUnitSide = data[3]
+    if(data){
+        console.log('SHALOM')
+        buildUnitHexX = data[0]
+        buildUnitHexY = data[1]
+        whatBuildUnit = data[2]
+        buildUnitSide = data[3]
+    }
+    
 
     updateVisible()
     console.log('Обновляю инфу об игре')
