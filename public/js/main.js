@@ -80,6 +80,7 @@ var startYforRed = 8
 var blueIsVirgin = true
 var redIsVirgin = true
 var idCount = 1
+var buildUnitSide = null
 
 var arrows = [
 
@@ -287,32 +288,32 @@ var updateInfoAboutGame = function(data){
     // builds = data[2]
     // arrows = data[3]
     switch(data[0]){
-        case 'moveUnit': //units.id, stepToX[], stepToY[], dist
+        case 'moveUnit': //hexX, hexY, side , stepToX[], stepToY[], dist
             for(var i = 0; i < units.length; i++){
                 
-                if(units[i].id == data[1]){
+                if(data[1] == units[i].hexX && data[2] == units[i].hexY && data[3] == units[i].side){
                     console.log(data)
-                    units[i].stepToX = data[2].slice()
-                    units[i].stepToY = data[3].slice()
+                    units[i].stepToX = data[4].slice()
+                    units[i].stepToY = data[5].slice()
                     units[i].move = true
-                    units[i].cooldown += data[4]*600/units[i].speed
+                    units[i].cooldown += data[6]*600/units[i].speed
                     units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
                     units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
                     units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
                 }
             }
             break
-        case 'killUnit': //units.id
+        case 'killUnit': //hexX, hexY, side 
             for(var i = 0; i < units.length; i++){
-                if(data[1] == units[i].id){
+                if(data[1] == units[i].hexX && data[2] == units[i].hexY && data[3] == units[i].side){
                     eatUnit(i)
                 }
             }
             updateVisible()
             break
-        case 'killBuild': //builds.id
+        case 'killBuild': //hexX, hexY, side 
             for(var i = 0; i < builds.length; i++){
-                if(data[1] == builds[i].id){
+                if(data[1] == builds[i].hexX && data[2] == builds[i].hexY && data[3] == builds[i].side){
                     builds.splice(i, 1)
                 }
             }
@@ -1783,7 +1784,7 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         
 }
 var sentUnit = function(toHexX, toHexY, dist){
-    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
+    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].hexX, units[unitIndex].hexY, units[unitIndex].side, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
     units[unitIndex].move = true
     units[unitIndex].globalToX = toHexX
     units[unitIndex].globalToY = toHexY
@@ -1947,7 +1948,7 @@ var getChanceToWin = function(typeAttack, attackerType, defenderType){
     return chance
 }
 var eatUnit = function(index){
-    socket.emit('updateInfoAboutGame', ['killUnit', units[index].id])
+    socket.emit('updateInfoAboutGame', ['killUnit', units[index].hexX, units[index].hexY, units[index].side])
     units.splice(index, 1)
     console.log('Обновляю инфу об игре')
 
@@ -1959,12 +1960,12 @@ var fightVsStructure = function(unit, structure){
     
     if(builds[structure].type == 'C'){
         console.log('Умирает здание и юнит')
-        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
-        socket.emit('updateInfoAboutGame', ['killUnit', units[unit].id])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].hexX, builds[structure].hexY, builds[structure].side])
+        socket.emit('updateInfoAboutGame', ['killUnit', units[unit].hexX, units[unit].hexY, units[unit].side])
         builds.splice(structure, 1)
         units.splice(unit, 1)
     }else{
-        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].hexX, builds[structure].hexY, builds[structure].side])
         builds.splice(structure, 1)
     }
 
