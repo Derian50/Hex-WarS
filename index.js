@@ -54,6 +54,7 @@ io.sockets.on('connection', function(socket) {
 		// }
 		tempId = data[0]
 		tempNickname = data[1]
+		console.log(tempId, tempNickname)
 		for(var i = 0; i < lobbyesData.length; i++){
 			for(var j = 0; j < lobbyesData[i].length; j++){
 				console.log('id ' + tempId + ' ' + lobbyesData[i][j][0])
