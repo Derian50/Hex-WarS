@@ -52,7 +52,7 @@ io.sockets.on('connection', function(socket) {
 		// 		socket.to(roomsDataAboutSockets[i][j].id).emit('setSide', j-1)
 		// 	}
 		// }
-		tempId = data[0]
+		tempId = data[0][0]
 		tempNickname = data[1]
 		console.log(tempId, tempNickname)
 		for(var i = 0; i < lobbyesData.length; i++){
