@@ -54,7 +54,7 @@ io.sockets.on('connection', function(socket) {
 		// }
 		tempId = data[0]
 		tempNickname = data[1]
-		socket.emit(lobbyesData)
+		socket.emit('setSide', lobbyesData)
 	})
 	socket.on('editMapInfo', function(newHexArr){
 		hexArr = newHexArr
