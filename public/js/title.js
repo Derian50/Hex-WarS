@@ -8,6 +8,7 @@ cvs.height = height
 
 var mainMenu = document.getElementById('mainMenu')
 var lobbyPage = document.getElementById('lobbyPage')
+var editorPage = document.getElementById('editorPage')
 
 var container = document.getElementById('container')
 var inputName = document.getElementById('inputName')
@@ -54,6 +55,8 @@ var colorButton = document.getElementById('colorButton')
 var tbody2 = document.getElementById('tbody2')
 var startGameButton = document.getElementById('startGameButton')
 
+var editorButton = document.getElementById('editorButton')
+var infoAboutMaps = []
 document.onclick = function(e){
     target = e.target
     var teamDiv = document.getElementById('teamDiv')
@@ -65,7 +68,7 @@ document.onclick = function(e){
         
         var roomId = -1
         console.log(lobbyesData)
-        roomId = lobbyesData[0][0]
+        if(lobbyesData.length > 0) roomId = lobbyesData[0][0]
         var roomsIndex = -1
         for(var i = 0; i < roomsData.length; i++){
             if(roomsData[i][0] == roomId) roomsIndex = i
@@ -93,11 +96,15 @@ document.onclick = function(e){
         }
     }
 }
+socket.on('getInfoAboutMaps', function(data){ //[[name, size, type][name,size,type]]
+    infoAboutMaps = data.slice()
+})
 socket.on('startGame', function(){
     console.log('Начать игру', lobbyesData, roomsData)
     
     mainMenu.className = 'row d-none'
     lobbyPage.className = 'row d-none'
+    editorPage.className = 'row d-none'
     
 })
 startGameButton.onclick = function(){
@@ -327,6 +334,7 @@ leaveButton.onclick = function(){
     socket.emit('pageIsLoad')
     mainMenu.className = 'row'
     lobbyPage.className = 'row d-none'
+    editorPage.className = 'row d-none'
 }
 
 saveName.onclick = function(){
@@ -416,6 +424,20 @@ mapSize_VeryLarge.onclick = function(){
     mapSize.innerHTML = 'VeryLarge'
     infoAboutGame.mapSize = 'VeryLarge'
     showPlayersCount(12)
+}
+
+editorButton.onclick = function(){
+        mainMenu.className = 'row d-none'
+        editorPage.className = 'row'
+        lobbyPage.className = 'row d-none'
+        createEditorTable()
+
+}
+var createEditorTable = function(){
+    createMapHandler()
+}
+var createMapHandler = function(){
+    
 }
 var showMapSize = function(mapSizeName){
     mapSize_Duel.className = 'dropdown-item d-block'
@@ -645,6 +667,7 @@ connectButton.onclick = function(){
         socket.emit('getLobbyesData', selectedRoomId)
         
         mainMenu.className = 'row d-none'
+        editorPage.className = 'row d-none'
         lobbyPage.className = 'row'
 
         createLobby()
@@ -671,6 +694,7 @@ var makeGame = function(){
     socket.emit('createRoom', infoAboutGame)
     socket.emit('getLobbyesData', infoAboutGame[0])
     mainMenu.className = 'row d-none'
+    editorPage.className = 'row d-none'
     lobbyPage.className = 'row'
     createLobby()
 }
