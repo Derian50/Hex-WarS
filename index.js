@@ -56,8 +56,11 @@ io.sockets.on('connection', function(socket) {
 		tempNickname = data[1]
 		for(var i = 0; i < lobbyesData.length; i++){
 			for(var j = 0; j < lobbyesData[i].length; j++){
+				console.log('id ' + lobbyesData[i][j][0])
 				if(lobbyesData[i][j][0] == tempId){
+					console.log('nick ' + lobbyesData[i][j][2])
 					if(lobbyesData[i][j][2] == tempNickname){
+						
 						socket.emit('setSide', lobbyesData[i][j][3])
 					}
 				}
