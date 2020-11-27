@@ -255,7 +255,7 @@ socket.on('setMapInfo', function(newHexArr){
     gameStart++
     if(gameStart >= 2) startGame()
 })
-socket.emit('getSide')
+socket.emit('getSide', roomsData[0])
 socket.on('setSide', function(data){
     console.log('SIDE — ', yourSide)
     console.log(data)

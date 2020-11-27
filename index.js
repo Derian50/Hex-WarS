@@ -42,17 +42,19 @@ io.sockets.on('connection', function(socket) {
 	socket.on('getMapInfo', function(){
 		socket.emit('setMapInfo', hexArr)
 	})
-	socket.on('getSide', function(){
+	socket.on('getSide', function(data){
 		console.log('Он хочет узнать свою сторону!')
-		for(var i = 0; i < roomsDataAboutSockets.length; i++){
-			for(var j = 1; j < roomsDataAboutSockets[i].length; j++){
-				console.log(roomsDataAboutSockets[i].length)
-				console.log(j)
-				console.log(roomsDataAboutSockets[i][j].id)
-				socket.to(roomsDataAboutSockets[i][j].id).emit('setSide', j-1)
-			}
-		}
-		
+		// for(var i = 0; i < roomsDataAboutSockets.length; i++){
+		// 	for(var j = 1; j < roomsDataAboutSockets[i].length; j++){
+		// 		console.log(roomsDataAboutSockets[i].length)
+		// 		console.log(j)
+		// 		console.log(roomsDataAboutSockets[i][j].id)
+		// 		socket.to(roomsDataAboutSockets[i][j].id).emit('setSide', j-1)
+		// 	}
+		// }
+		tempId = data[0]
+		tempNickname = data[1]
+		socket.emit(lobbyesData)
 	})
 	socket.on('editMapInfo', function(newHexArr){
 		hexArr = newHexArr
