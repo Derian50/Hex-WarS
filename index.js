@@ -54,7 +54,16 @@ io.sockets.on('connection', function(socket) {
 		// }
 		tempId = data[0]
 		tempNickname = data[1]
-		socket.emit('setSide', lobbyesData)
+		for(var i = 0; i < lobbyesData.length; i++){
+			for(var j = 0; j < lobbyesData[i].length; j++){
+				if(lobbyData[i][j][0] == tempId){
+					if(lobbyesData[i][j][2] == tempNickname){
+						socket.emit('setSide', lobbyesData[i][j][3])
+					}
+				}
+			}
+		}
+		
 	})
 	socket.on('editMapInfo', function(newHexArr){
 		hexArr = newHexArr
