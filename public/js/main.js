@@ -320,6 +320,7 @@ var updateInfoAboutGame = function(data){
             updateVisible()
             break
         case 'createUnit': //id, hexX, hexY, unitType, side
+
             tempBuildUnit = whatBuildUnit
             buildUnitHexX = data[2]
             buildUnitHexY = data[3]
@@ -586,11 +587,13 @@ var getFoodCost = function(unitType){
     }
 }
 var buildUnit = function(id){
+    changeUnitsId = false
     console.log(idCount, id)
     if(idCount == id){
         console.log('Всё ок, айдишники сходятся')
     }else{
         console.log('Нихуя не ок, айдишники не сходятся')
+        changeUnitsId = true
     }
     units.push({
         id: idCount++,
@@ -619,6 +622,12 @@ var buildUnit = function(id){
     })
     if(tempBuildUnit){
         whatBuildUnit = tempBuildUnit
+    }
+    if(changeUnitsId){
+        var t = null
+        t = units[units.length-1].id
+        units[units.length-1].id = units[units.length-2].id
+        units[units.length-2].id = t
     }
     updateVisible()
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])

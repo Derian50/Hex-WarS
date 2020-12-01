@@ -108,7 +108,7 @@ socket.on('startGame', function(){
     
 })
 startGameButton.onclick = function(){
-	socket.emit('startGame', lobbyesData, roomsData)
+	socket.emit('startGame', lobbyesData, roomsData, selectedRoomId)
     
 }
 var checkStartGame = function(lobbyesInfo, roomsInfo){
