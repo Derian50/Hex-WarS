@@ -56,7 +56,14 @@ var tbody2 = document.getElementById('tbody2')
 var startGameButton = document.getElementById('startGameButton')
 
 var editorButton = document.getElementById('editorButton')
+var tbody3 = document.getElementById('tbody3')
+var changeMapButton = document.getElementById('changeMapButton')
+var createNewMapButton = document.getElementById('createNewMapButton')
+var inputMapName = document.getElementById('inputMapName')
+
+var mapEditId
 var infoAboutMaps = []
+    var arrWithMapsId = []
 document.onclick = function(e){
     target = e.target
     var teamDiv = document.getElementById('teamDiv')
@@ -96,8 +103,12 @@ document.onclick = function(e){
         }
     }
 }
-socket.on('getInfoAboutMaps', function(data){ //[[name, size, type][name,size,type]]
+socket.emit('getInfoAboutMaps')
+	
+socket.on('setInfoAboutMaps', function(data){ //[[name, size, type][name,size,type]]
     infoAboutMaps = data.slice()
+    console.log('я знаю о ', infoAboutMaps.length, ' картах')
+    console.log('Первая из них ', infoAboutMaps[0][0], infoAboutMaps[0][1], infoAboutMaps[0][2])
 })
 socket.on('startGame', function(){
     console.log('Начать игру', lobbyesData, roomsData)
@@ -302,6 +313,18 @@ var createSpectrator = function(){
     }
     
 }
+var createMapsHandler = function(){
+    for(var i = 0; i < infoAboutMaps.length; i++){
+        arrWithMapsId[i].onclick = function(e){
+            for(var j = 0; j < infoAboutMaps.length; j++){
+                arrWithMapsId[j].style = 'background-color: rgb(255, 255, 255);'
+
+            }
+            document.getElementById(e.target.parentNode.id).style = 'background-color: rgba(0, 0, 0, 0.15);'
+            mapEditId = e.target.parentNode.id
+        }
+    }
+}
 if(localStorage.getItem('name')){
     if(localStorage.getItem('name')){
         inputName.value = localStorage.getItem('name')
@@ -431,14 +454,40 @@ editorButton.onclick = function(){
         editorPage.className = 'row'
         lobbyPage.className = 'row d-none'
         createEditorTable()
+        createMapsHandler()
 
 }
-var createEditorTable = function(){
-    createMapHandler()
+
+createNewMapButton.onclick = function(){
+    console.log('Ты сейчас создашь новую карту с айдишником ', infoAboutMaps.length)
+    socket.emit('createNewMap', [infoAboutMaps.length, inputMapName.value])
 }
-var createMapHandler = function(){
+changeMapButton.onclick = function(){
+    console.log('Ты сейчас изменишь карту с айдишником ', mapEditId)
+
+    socket.emit('startEditMap', [mapEditId, infoAboutMaps[mapEditId][3]])
+}
+var createEditorTable = function(){
+    tbody3.innerHTML = ''
+    for(var i = 0; i < infoAboutMaps.length; i++){
+        var tr = document.createElement('tr')
+        var td1 = document.createElement('td')
+        var td2 = document.createElement('td')
+        var td3 = document.createElement('td')
+        td1.innerHTML = infoAboutMaps[i][0]
+        td2.innerHTML = infoAboutMaps[i][1]
+        td3.innerHTML = infoAboutMaps[i][2]
+        tr.append(td1)
+        tr.append(td2)
+        tr.append(td3)
+        arrWithMapsId.push(tr)
+        tr.id = i
+        tbody3.append(tr)
+    }
+    
     
 }
+
 var showMapSize = function(mapSizeName){
     mapSize_Duel.className = 'dropdown-item d-block'
     mapSize_VerySmall.className = 'dropdown-item d-block'

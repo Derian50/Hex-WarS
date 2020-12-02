@@ -1,7 +1,7 @@
 var cvs = document.getElementById('canvas')
 var ctx = cvs.getContext("2d")
-var width = 1600,
-    height = 900
+var width = 2000,
+    height = 1000
 cvs.width = width
 cvs.height = height
 var menucvs = document.getElementById('menuCanvas')
@@ -28,6 +28,9 @@ var mountainHex = new Image()
 mountainHex.src = 'assets/mountainHex.png'
 var waterHex = new Image()
 waterHex.src = 'assets/waterHex.png'
+ 
+var howToPlayButton = new Image()
+howToPlayButton.src = 'assets/howToPlayButton.jpg'
 
 var plainHexExplored = new Image()
 plainHexExplored.src = 'assets/plainHexExplored.png'
@@ -248,14 +251,23 @@ var units = [
     
 ]
 var gameStart = 0
-socket.emit('getMapInfo')
-socket.on('setMapInfo', function(newHexArr){
-    console.log('Я получил данные о хексах')
-    hexArr = newHexArr
-    gameStart++
-    if(gameStart >= 2) startGame()
+console.log('файл main.js загрузился')
+socket.emit('whatTypeOfGame')
+socket.on('startEditGame', function(data){
+    
+    console.log('началось редактирование')
+    mapEditor = true
+    mapEditId = data[0]
+    hexArr = data[1]
+    updateVisible()
+    mainLoop()
 })
-socket.emit('getSide', [roomsData[0], inputName.value])
+socket.on('startNormalGame', function(newHexArr){
+    hexArr = newHexArr
+    console.log('началась нормальная игра')
+    socket.emit('getSide', [roomsData[0], inputName.value])
+})
+
 socket.on('setSide', function(data){
     console.log('SIDE — ', yourSide)
     console.log(data)
@@ -269,8 +281,8 @@ socket.on('setSide', function(data){
             
     }
     console.log('SIDE — ', yourSide)
-    gameStart++
-    if(gameStart >= 2) startGame()
+    console.log(hexArr)
+    startGame()
 })
 socket.on('sentInfoAboutGame', function(data){
     updateInfoAboutGame(data)
@@ -1182,7 +1194,7 @@ var doSomethingWithClick = function(arrXY){
     if((x + y) % 2 === 1) x--
     if(mapEditor){
         hexArr[x][y].groundType = currentEditorColorName
-        socket.emit('editMapInfo', hexArr)
+        socket.emit('editMapInfo', [mapEditId, hexArr])
         return
     }
     if((activeHexX === x && activeHexY === y) || x < 0 || y < 0){
@@ -2453,6 +2465,9 @@ var checkActive = function(){
     }
     activeHexX = -1
     activeHexY = -1
+}
+var startEditGame = function(){
+
 }
 var startGame = function(){
     //createArrs()

@@ -27,20 +27,87 @@ roomsData = []
 roomsDataAboutPlayers = []
 roomsDataAboutSockets = []
 hexArr = []
-
+typeOfGame = null //editor or normal
 lobbyesData = [] //[айдишник комнаты, хост или нет, имя, команда, цвет]
 // Функция, которая сработает при подключении к странице
 // Считается как новый пользователь
 
-
+var mapsArr = []
+var howManyMaps = 0
+var downloadMapsArr = function(){
+	mapsArr = []
+	howManyMaps = 0
+	var stopVar = 2
+	var pathName
+	
+	// for(var i = 0; i < stopVar; i++){
+	// 	pathName = 'maps/mapInfo' + i + '.json'
+	// 	fs.access(pathName, function(err){
+	// 		if(err){
+	// 		  //console.log(err)
+	// 		  i = 9999
+	// 		  return
+	// 		}else{
+	// 			//console.log('cуществует')
+	// 			howManyMaps = i
+	// 		}
+	// 	})
+	// }
+	// console.log(howManyMaps)
+	for(var i = 0; i < stopVar; i++){
+		pathName = 'maps/mapInfo' + i + '.json'
+		if(fs.existsSync(pathName)){
+			howManyMaps = i+1
+			stopVar++
+		}else{
+			i = 9999
+		}
+	}
+	for(var i = 0; i < howManyMaps; i++){
+		pathName = pathName = 'maps/mapInfo' + i + '.json'
+		tempFile = fs.readFileSync(pathName)
+		tempArr = JSON.parse(tempFile)
+		mapsArr.push(['Карта номер ' + i, 'small' , '1x1', tempArr])//название, размер, тип, карта
+	}
+	console.log('я кончил закачивать карты, всего их ', mapsArr.length)
+}
+downloadMapsArr()
 io.sockets.on('connection', function(socket) {
 	
-	file = fs.readFileSync('mapInfo.json')
+	file = fs.readFileSync('maps/mapInfo0.json')
 	hexArr = JSON.parse(file)
 	io.sockets.emit('loadPage', 'title')
 	
-	socket.on('getMapInfo', function(){
-		socket.emit('setMapInfo', hexArr)
+	socket.on('getInfoAboutMaps', function(){
+		socket.emit('setInfoAboutMaps', mapsArr)
+	})
+	socket.on('createNewMap', function(data){
+		fs.openSync('maps/mapInfo' + data[0] + '.json', 'w')
+
+		fs.writeFileSync('maps/mapInfo' + data[0] + '.json', JSON.stringify(mapsArr[0][3]), function(){
+			console.log('В новую карту записаны данные хексов из первой карты')
+		})
+		
+		downloadMapsArr()
+		socket.emit('startGame')
+		socket.emit('loadPage', 'main')
+		console.log('startEditGame')
+		typeOfGame = 'editor'
+		hexArr = [mapsArr.length-1, mapsArr[0][3]]
+	})
+	socket.on('whatTypeOfGame', function(){
+		if(typeOfGame == 'editor'){
+			socket.emit('startEditGame', hexArr)
+		}else{
+			socket.emit('startNormalGame', mapsArr[0][3])
+		}
+	})
+	socket.on('startEditMap', function(data){
+		socket.emit('startGame')
+		socket.emit('loadPage', 'main')
+		console.log('startEditGame')
+		typeOfGame = 'editor'
+		hexArr = data
 	})
 	socket.on('getSide', function(data){
 		console.log('Он хочет узнать свою сторону!')
@@ -69,9 +136,11 @@ io.sockets.on('connection', function(socket) {
 		}
 		
 	})
-	socket.on('editMapInfo', function(newHexArr){
-		hexArr = newHexArr
-		fs.writeFileSync('mapInfo.json', JSON.stringify(hexArr))
+	socket.on('editMapInfo', function(data){
+		console.log()
+		hexArr = data[1]
+		fs.writeFileSync('maps/mapInfo' +  data[0] + '.json', JSON.stringify(hexArr))
+		downloadMapsArr()
 		
 	})
 	// Добавление нового соединения в массив
@@ -85,6 +154,7 @@ io.sockets.on('connection', function(socket) {
 		var destroyInfoAboutSockets = null
 		socket.emit('startGame')
 		socket.emit('loadPage','main')
+		typeOfGame = 'normal'
 		for(var i = 0; i < roomsDataAboutSockets.length; i++){
 			if(roomsDataAboutSockets[i][0] == lobbyesInfo[0][0]){
 
