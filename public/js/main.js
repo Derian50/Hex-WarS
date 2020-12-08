@@ -1,7 +1,7 @@
 var cvs = document.getElementById('canvas')
 var ctx = cvs.getContext("2d")
-var width = 2000,
-    height = 1000
+var width = 1800,
+    height = 900
 cvs.width = width
 cvs.height = height
 var menucvs = document.getElementById('menuCanvas')
@@ -57,7 +57,7 @@ var currentMouseX = 0
 var currentMouseY = 0
 var wood = 100
 var food = 100
-var gold = 100
+var gold = 0
 var canMakeBuild = []
 var canMakeUnit = []
 var yourSide = 'Red'
@@ -65,8 +65,8 @@ var typeHex = []
 var hexArr = null
 var unitsArr = []
 var buildsArr = []
-var HEXWIDTH = 50
-var HEXHEIGHT = 20
+var HEXWIDTH = 48
+var HEXHEIGHT = 18
 var TOPMENUSIZE = 64
 var activeHexX = -1, activeHexY = -1, activeType = null
 var falseHexX = -1, falseHexY = -1, timerFalseHex = -1
@@ -80,10 +80,15 @@ var startXforRed = 46
 var startYforRed = 2
 var blueIsVirgin = true
 var redIsVirgin = true
-var idCount = 1
+var idCount = 0
 var tempBuildStructure = null
 var activeKey = null
 var tempBuildUnit = null
+var lkmIsPressed = false
+var changeSpawnX = null
+var changeSpawnY = null
+var changeSpawnPlayerNum = null
+
 var arrows = [
 ]
 var builds = [
@@ -198,56 +203,56 @@ var builds = [
     // }
 ]
 var units = [
-    {
-        id: 0,
-        type: 'W',
-        speed: 2,
-        range: 0,
-        color: '#4671D5',
-        active: false,
-        x: startXforBlue*32+32,
-        y: startYforBlue*48+32,
-        hexX: startXforBlue,
-        hexY: startYforBlue,
-        finalHexX: 1,
-        finalHexY: 3,
-        move: false,
-        direction: 'down-left',
-        stepToX: [],
-        stepToY: [],
-        globalToX: null,
-        globalToY: null,
-        side: 'Blue',
-        inCooldown: false,
-        canMove: true,
-        cooldown: null,
-        progressRes: 0
-    },
-    {
-        id: 1,
-        type: 'W',
-        speed: 2,
-        range: 0,
-        color: '#4671D5',
-        active: false,
-        x: startXforRed*32+32,
-        y: startYforRed*48+32,
-        hexX: startXforRed,
-        hexY: startYforRed,
-        finalHexX: 1,
-        finalHexY: 3,
-        move: false,
-        direction: 'down-left',
-        stepToX: [],
-        stepToY: [],
-        globalToX: null,
-        globalToY: null,
-        side: 'Red',
-        inCooldown: false,
-        canMove: true,
-        cooldown: null,
-        progressRes: 0
-    }
+    // {
+    //     id: 0,
+    //     type: 'W',
+    //     speed: 2,
+    //     range: 0,
+    //     color: '#4671D5',
+    //     active: false,
+    //     x: startXforBlue*32+32,
+    //     y: startYforBlue*48+32,
+    //     hexX: startXforBlue,
+    //     hexY: startYforBlue,
+    //     finalHexX: 1,
+    //     finalHexY: 3,
+    //     move: false,
+    //     direction: 'down-left',
+    //     stepToX: [],
+    //     stepToY: [],
+    //     globalToX: null,
+    //     globalToY: null,
+    //     side: 'Blue',
+    //     inCooldown: false,
+    //     canMove: true,
+    //     cooldown: null,
+    //     progressRes: 0
+    // },
+    // {
+    //     id: 1,
+    //     type: 'W',
+    //     speed: 2,
+    //     range: 0,
+    //     color: '#4671D5',
+    //     active: false,
+    //     x: startXforRed*32+32,
+    //     y: startYforRed*48+32,
+    //     hexX: startXforRed,
+    //     hexY: startYforRed,
+    //     finalHexX: 1,
+    //     finalHexY: 3,
+    //     move: false,
+    //     direction: 'down-left',
+    //     stepToX: [],
+    //     stepToY: [],
+    //     globalToX: null,
+    //     globalToY: null,
+    //     side: 'Red',
+    //     inCooldown: false,
+    //     canMove: true,
+    //     cooldown: null,
+    //     progressRes: 0
+    // }
     
 ]
 var gameStart = 0
@@ -655,7 +660,7 @@ var wantBuildStructure = function(structureType){
     whatBuildStructure = structureType
 } 
 var canBuild = function(toHexX, toHexY){
-    if(checkDist(activeHexX, activeHexY, toHexX, toHexY) == 1 && hexArr[toHexX][toHexY].groundType !== 'mountain'&& hexArr[toHexX][toHexY].groundType !== 'water' && !whatIsBuildIndex(toHexX, toHexY) && !whatIsUnitIndex(toHexX, toHexY)){
+    if(checkDist(activeHexX, activeHexY, toHexX, toHexY) == 1 && hexArr[toHexX][toHexY].groundType !== 'mountain' && hexArr[toHexX][toHexY].groundType !== 'water' && !whatIsBuildIndex(toHexX, toHexY) && !whatIsUnitIndex(toHexX, toHexY)){
         return true
     }else{
         return false
@@ -813,14 +818,23 @@ window.onmousemove = function(e){
         currentMouseX = e.layerX
         currentMouseY = e.layerY
     }
+    if(lkmIsPressed && mapEditor){
+        XY = whatHexIsClicked(e.layerX, e.layerY)
+        doSomethingWithClick(XY)
+    }
+}
+window.onmouseup = function(e){
+    lkmIsPressed = false
 }
 window.onmousedown = function(e){
+    lkmIsPressed = true
     if(e.clientY < 68){
         clickOnMenu(e.layerX, e.layerY)
         return
     }
     if(this.mapEditor){
-       if(e.layerX > 1500 && e.layerX < 1564){
+       if(e.layerX > 1600 && e.layerX < 1664){
+            changeSpawnPlayerNum = null
            if(e.layerY > 148 && e.layerY < 212){
             this.currentEditorColor = 'rgb(147, 200, 83)'
             this.currentEditorColorName = 'plain'
@@ -840,8 +854,17 @@ window.onmousedown = function(e){
             this.currentEditorColor = 'rgb(0, 6, 104)'
             this.currentEditorColorName = 'water'
            }
+       }else if(e.layerX > 1684 && e.layerX < 1748){
+        if(e.layerY > 148 && e.layerY < 212){
+            this.currentEditorColor = 'rgba(0, 6, 255, 0.5)'
+            this.changeSpawnPlayerNum = 0
+           }else if(e.layerY > 212 && e.layerY < 276){
+            this.currentEditorColor = 'rgba(255, 24, 4, 0.5)'
+            this.changeSpawnPlayerNum = 1
+
        }
     }
+}
     XY = this.whatHexIsClicked(e.layerX, e.layerY)
     if(wantToBuildStructure && canBuild(XY[0], XY[1])){
         units[whatIsUnitIndex(activeHexX, activeHexY)].active = false
@@ -868,6 +891,7 @@ window.onmousedown = function(e){
     }
     doSomethingWithClick(XY)
     
+
 }
 var checkIsSimpleHex = function(x,y){
     for(var i = 0; i < HEXHEIGHT*2; i++){
@@ -1033,7 +1057,7 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         if(rangerCanAttack(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, units[unitIndex].direction, units[unitIndex].type)){
             units[unitIndex].inCooldown = true
             units[unitIndex].cooldown += (600/units[unitIndex].speed)
-            if(units[unitIndex].type == 'A' || units[unitIndex].type == 'D'){
+            if(units[unitIndex].type == 'A' || (units[unitIndex].type == 'D' && gold > 0 && gold-- > -1)){
                 socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow')
             } else if(units[unitIndex].type == 'R'){
@@ -1187,13 +1211,25 @@ var whatIsDirection = function(currentHexX, currentHexY, toHexX, toHexY){
     }
 }
 var doSomethingWithClick = function(arrXY){ 
-    
+    console.log('doSomethingWithClick')
     x = arrXY[0]
     y = arrXY[1]
-    
+    if(x >= HEXWIDTH || x < 0 || y >= HEXHEIGHT || y < 0) return
     if((x + y) % 2 === 1) x--
     if(mapEditor){
-        hexArr[x][y].groundType = currentEditorColorName
+        console.log(x,y)
+        if(changeSpawnPlayerNum != null){
+            for(var i = 0; i < HEXWIDTH; i++){
+                for(var j = 0; j < HEXHEIGHT; j++){
+                    if(i%2 != j%2) continue
+                    if(hexArr[i][j].spawnForPlayer == changeSpawnPlayerNum) hexArr[i][j].spawnForPlayer = null
+                }
+            }
+
+            hexArr[x][y].spawnForPlayer = changeSpawnPlayerNum
+        }else{
+            hexArr[x][y].groundType = currentEditorColorName 
+        }
         socket.emit('editMapInfo', [mapEditId, hexArr])
         return
     }
@@ -2144,6 +2180,16 @@ var renderBuilds = function(){
     ctx.fillStyle = '#000000'
 }
 var renderEditButton = function(){
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.font = "bold 32px Courier"
+    for(var i = 0; i < HEXWIDTH; i++){
+        for(var j = 0; j < HEXHEIGHT; j++){
+            if(i%2 != j%2) continue
+            if(hexArr[i][j].spawnForPlayer != null){
+                ctx.fillText('P' + (hexArr[i][j].spawnForPlayer+1), 14+i*32, 38+j*48)
+            }
+        }
+    }
     for(var i = 0; i < 8; i++){
         switch(i){
             case 0:
@@ -2172,9 +2218,13 @@ var renderEditButton = function(){
                 break
             
         }
-        ctx.fillRect(1500,20+i*64,64,64)
+        ctx.fillRect(1600,20+i*64,64,64)
         
     }
+    ctx.fillStyle = 'rgba(0, 6, 255, 0.5)'
+    ctx.fillRect(1684, 20+2*64, 64, 64)
+    ctx.fillStyle = 'rgba(255, 24, 4, 0.5)'
+    ctx.fillRect(1684, 20+3*64, 64, 64)
 }
 var renderUnits = function(){
     for(var i = 0; i < units.length; i++){
@@ -2391,7 +2441,7 @@ var renderBuildStuctureAndUnit = function(){
                     break
             }
         
-        if(hexX < 0 || hexY < 0 || hexX > HEXWIDTH || hexY > HEXHEIGHT || whatIsBuildIndex(hexX, hexY) || whatIsUnitIndex(hexX, hexY)+1 || hexArr[hexX][hexY].groundType == 'mountain') continue
+        if(hexX < 0 || hexY < 0 || hexX > HEXWIDTH || hexY > HEXHEIGHT || whatIsBuildIndex(hexX, hexY) || whatIsUnitIndex(hexX, hexY)+1 || hexArr[hexX][hexY].groundType == 'mountain' || hexArr[hexX][hexY].groundType == 'water') continue
         ctx.drawImage(canBuildHex, hexX*32, hexY*48)
     }
         if(wantToBuildStructure){
@@ -2429,7 +2479,7 @@ var collectRes = function(){
             if(units[i].progressRes > 16 && countPower == 2){
                 
                 if(hexArr[units[i].hexX][units[i].hexY].groundType == 'forest'){
-                    wood += 1
+                    wood += 0.5
                 }else if(hexArr[units[i].hexX][units[i].hexY].groundType == 'beach'){
                     food += 1
                 } 
@@ -2469,10 +2519,37 @@ var checkActive = function(){
 var startEditGame = function(){
 
 }
+
+var makeFirstWorkers = function(){
+    whatBuildUnit = 'W'
+    for(var i = 0; i < HEXWIDTH; i++){
+        for(var j = 0; j < HEXHEIGHT; j++){
+            if(i%2 != j%2) continue 
+            if(hexArr[i][j].spawnForPlayer == 0){
+                startXforBlue = i
+                startYforBlue = j
+            }else if(hexArr[i][j].spawnForPlayer == 1){
+                startXforRed = i
+                startYforRed = j
+            }
+        }
+    }
+    buildUnitHexX = startXforBlue
+    buildUnitHexY = startYforBlue
+    buildUnitSide = "Blue"
+    buildUnit(0)
+    console.log('Построил синего рабочего на ',startXforBlue, startYforBlue)
+    buildUnitHexX = startXforRed
+    buildUnitHexY = startYforRed
+    buildUnitSide = "Red"
+    buildUnit(1)
+}
 var startGame = function(){
     //createArrs()
     
     //createHexArrs()
+    console.log('startGame')
+    makeFirstWorkers()
     createUnitsArr()
     createBuildsArr()
     updateVisible()

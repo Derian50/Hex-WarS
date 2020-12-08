@@ -74,7 +74,6 @@ document.onclick = function(e){
     if(teamDiv){
         
         var roomId = -1
-        console.log(lobbyesData)
         if(lobbyesData.length > 0) roomId = lobbyesData[0][0]
         var roomsIndex = -1
         for(var i = 0; i < roomsData.length; i++){
