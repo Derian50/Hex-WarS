@@ -88,6 +88,9 @@ var lkmIsPressed = false
 var changeSpawnX = null
 var changeSpawnY = null
 var changeSpawnPlayerNum = null
+var popupNum = -1
+var popupCount = 0
+var popupX, popupY
 
 var arrows = [
 ]
@@ -809,11 +812,109 @@ window.onkeydown = function(e){
     }
     
 }
+var popupWindows = function(command){
+    switch(command){
+        case 'newStep':
+            popupCount++
+            break
+        case 'stop':
+            popupCount = 0
+            break
+    }
+    if(popupCount > 15 && popupX != null){
+        console.log('Я бы создал в точке ', popupX , " ", popupY, " новое окно с индексом ", popupNum)
+        menuctx.fillRect(popupX, popupY, 350, 54)
+        menuctx.fillStyle = 'rgb(0,0,0)'
+        menuctx.font = "16px Comic Sans MS"
+        switch(popupNum){
+            case 0:
+                menuctx.fillText('Это замок', popupX, popupY+16)
+                menuctx.fillText('Он может стрелять и нанимать кого попало', popupX, popupY+32)
+                menuctx.fillText('Стоимость 50 дерева', popupX, popupY+48)
+                break
+            case 1:
+                menuctx.fillText('Это бараки', popupX, popupY+16)
+                menuctx.fillText('Здесь живут разведчики и копейщики', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 дерева', popupX, popupY+48)
+                break
+            case 2:
+                menuctx.fillText('Это стрельбище', popupX, popupY+16)
+                menuctx.fillText('Здесь обитают лучники и застрельщики', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 дерева', popupX, popupY+48)
+                break
+            case 3:
+                menuctx.fillText('Это конюшня', popupX, popupY+16)
+                menuctx.fillText('Здесь нанимается кавалерия и драгуны', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 дерева', popupX, popupY+48)
+                break
+            case 4:
+                menuctx.fillText('Это жилой дом', popupX, popupY+16)
+                menuctx.fillText('Здесь живут обычные работяги', popupX, popupY+32)
+                menuctx.fillText('Стоимость 10 дерева', popupX, popupY+48)
+                break
+            case 5:
+                menuctx.fillText('Это кавалерия', popupX, popupY+16)
+                menuctx.fillText('Она быстрая, сильная и дорогая', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 еды', popupX, popupY+48)
+                break
+            case 6:
+                menuctx.fillText('Это лучник', popupX, popupY+16)
+                menuctx.fillText('И этим всё сказано', popupX, popupY+32)
+                menuctx.fillText('Стоимость 10 еды', popupX, popupY+48)
+                break
+            case 7:
+                menuctx.fillText('Это пикинёр', popupX, popupY+16)
+                menuctx.fillText('Эффективен против всадников', popupX, popupY+32)
+                menuctx.fillText('Стоимость 10 еды', popupX, popupY+48)
+                break
+            case 8:
+                menuctx.fillText('Это разведчик', popupX, popupY+16)
+                menuctx.fillText('Он быстрый дешёвый и слабый', popupX, popupY+32)
+                menuctx.fillText('Стоимость 15 еды', popupX, popupY+48)
+                break
+            case 9:
+                menuctx.fillText('Это застрельщик', popupX, popupY+16)
+                menuctx.fillText('Он кидаёт пронзающее всех и вся копьё', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 еды', popupX, popupY+48)
+                break
+            case 10:
+                menuctx.fillText('Это драгун(конкистадор на лошадке)', popupX, popupY+16)
+                menuctx.fillText('Чтобы стрелять он тратит золото', popupX, popupY+32)
+                menuctx.fillText('Стоимость 20 еды', popupX, popupY+48)
+                break
+            case 11:
+                menuctx.fillText('Это рабочий', popupX, popupY+16)
+                menuctx.fillText('Он добывает ресурсы и строит здания', popupX, popupY+32)
+                menuctx.fillText('Стоимость 5 еды', popupX, popupY+48)
+                break
+        }
+        
+    }
+}
 window.onkeyup = function(e){
     activeKey = null
 }
 
 window.onmousemove = function(e){
+    
+    for(var i = 0; i < 12; i++){
+        if(e.layerX > 200+i*70 && e.layerX < 200+i*70+64 && e.clientY < 68){
+            if(popupNum != i) popupWindows('stop')
+            popupNum = i
+            popupX = e.layerX+12
+            popupY = e.layerY
+            popupWindows('change')
+            return
+            
+        }else if(e.clientY > 68 && popupNum != -1){
+            popupNum = -1
+            popupX = null
+            popupY = null
+            popupWindows('stop')
+            return
+        }
+    }
+    
     if(e.clientY > 68){
         currentMouseX = e.layerX
         currentMouseY = e.layerY
@@ -2578,5 +2679,6 @@ var mainLoop = function(){
     renderBuildStuctureAndUnit()
     checkFalseHex()
     checkActive()
+    popupWindows('newStep')
     requestAnimationFrame(mainLoop)
 }
