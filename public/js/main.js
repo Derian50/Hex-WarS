@@ -875,7 +875,7 @@ var popupWindows = function(command){
             case 9:
                 menuctx.fillText('Это застрельщик', popupX, popupY+16)
                 menuctx.fillText('Он кидаёт пронзающее всех и вся копьё', popupX, popupY+32)
-                menuctx.fillText('Стоимость 20 еды', popupX, popupY+48)
+                menuctx.fillText('Стоимость 10 еды', popupX, popupY+48)
                 break
             case 10:
                 menuctx.fillText('Это драгун(конкистадор на лошадке)', popupX, popupY+16)
