@@ -1159,7 +1159,7 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         if(rangerCanAttack(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, units[unitIndex].direction, units[unitIndex].type)){
             units[unitIndex].inCooldown = true
             units[unitIndex].cooldown += (600/units[unitIndex].speed)
-            if(units[unitIndex].type == 'A' || (units[unitIndex].type == 'D' && gold > 0 && gold-- > -1)){
+            if(units[unitIndex].type == 'A' || (units[unitIndex].type == 'D' && gold > 1 && gold-- > -1)){
                 // socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow')
             } else if(units[unitIndex].type == 'R'){
