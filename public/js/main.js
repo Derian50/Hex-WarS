@@ -2019,8 +2019,6 @@ var moveUnits = function(){
                 
                 
             }
-            units[i].hexX = units[i].stepToX[0]
-            units[i].hexY = units[i].stepToY[0]
             deltaX = (units[i].stepToX[0] - units[i].hexX) * 32
             deltaY = (units[i].stepToY[0] - units[i].hexY) * 48
             oneStepX = deltaX/60*units[i].speed
