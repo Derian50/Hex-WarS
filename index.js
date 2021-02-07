@@ -145,10 +145,14 @@ io.sockets.on('connection', function(socket) {
 	})
 	// Добавление нового соединения в массив
 	connections.push(socket)
+	var time = new Date()
+	var temp
 	socket.on('updateInfoAboutGame', function(data){
 		console.log('updateInfoAboutGame')
-		gamesData = data
-		socket.broadcast.emit('sentInfoAboutGame', gamesData)
+		console.log(time.getTime())
+		
+
+		socket.broadcast.emit('sentInfoAboutGame', data)
 	})
 	socket.on('startGame', function(lobbyesInfo, roomsInfo){
 		var destroyInfoAboutSockets = null

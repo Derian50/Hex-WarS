@@ -297,76 +297,76 @@ socket.on('sentInfoAboutGame', function(data){
     
 })
 var updateInfoAboutGame = function(data){
-    units = data[1]
-    builds = data[2]
-    arrows = data[3]
-    // switch(data[0]){
-    //     case 'moveUnit': //units.id, stepToX[], stepToY[], dist
-    //         for(var i = 0; i < units.length; i++){
+    // units = data[1]
+    // builds = data[2]
+    // arrows = data[3]
+    switch(data[0]){
+        case 'moveUnit': //units.id, stepToX[], stepToY[], dist
+            for(var i = 0; i < units.length; i++){
                 
-    //             if(units[i].id == data[1]){
-    //                 units[i].stepToX = data[2].slice()
-    //                 units[i].stepToY = data[3].slice()
-    //                 units[i].move = true
-    //                 units[i].cooldown += data[4]*600/units[i].speed
-    //                 units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
-    //                 units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
-    //                 units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
-    //             }
-    //         }
-    //         break
-    //     case 'killUnit': //units.id
-    //         for(var i = 0; i < units.length; i++){
-    //             if(data[1] == units[i].id){
-    //                 eatUnit(i)
-    //             }
-    //         }
-    //         updateVisible()
-    //         break
-    //     case 'killBuild': //builds.id
-    //         for(var i = 0; i < builds.length; i++){
-    //             if(data[1] == builds[i].id){
-    //                 builds.splice(i, 1)
-    //             }
-    //         }
-    //         updateVisible()
-    //         break
-    //     case 'killArrow': //arrows.id
-    //         for(var i = 0; i < arrows.length; i++){
-    //             if(data[1] == arrows[i].id){
-    //                 arrows.splice(i, 1)
-    //             }  
-    //         }
-    //         updateVisible()
-    //         break
-    //     case 'createUnit': //id, hexX, hexY, unitType, side
+                if(units[i].id == data[1]){
+                    units[i].stepToX = data[2].slice()
+                    units[i].stepToY = data[3].slice()
+                    units[i].move = true
+                    units[i].cooldown += data[4]*600/units[i].speed
+                    units[i].direction = whatIsDirection(units[i].hexX, units[i].hexY, units[i].stepToX[0], units[i].stepToY[0])
+                    units[i].globalToX = units[i].stepToX[units[i].stepToX.length-1]
+                    units[i].globalToY = units[i].stepToY[units[i].stepToY.length-1]
+                }
+            }
+            break
+        case 'killUnit': //units.id
+            for(var i = 0; i < units.length; i++){
+                if(data[1] == units[i].id){
+                    eatUnit(i)
+                }
+            }
+            updateVisible()
+            break
+        case 'killBuild': //builds.id
+            for(var i = 0; i < builds.length; i++){
+                if(data[1] == builds[i].id){
+                    builds.splice(i, 1)
+                }
+            }
+            updateVisible()
+            break
+        case 'killArrow': //arrows.id
+            for(var i = 0; i < arrows.length; i++){
+                if(data[1] == arrows[i].id){
+                    arrows.splice(i, 1)
+                }  
+            }
+            updateVisible()
+            break
+        case 'createUnit': //id, hexX, hexY, unitType, side
 
-    //         tempBuildUnit = whatBuildUnit
-    //         buildUnitHexX = data[2]
-    //         buildUnitHexY = data[3]
-    //         whatBuildUnit = data[4]
-    //         buildUnitSide = data[5]
-    //         buildUnit(data[1])
-    //         break
-    //     case 'createBuild': //id, hexX, hexY, structureType, side
-    //         tempBuildStructure = whatBuildStructure
-    //         buildStructureHexX = data[2]
-    //         buildStructureHexY = data[3]
-    //         whatBuildStructure = data[4]
-    //         buildStructureSide = data[5]
-    //         buildStructure(data[1])
-    //         break
-    //     case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
-    //         if(isCastleInThisHex(data[1], data[2])){
-    //             builds[whatIsBuildIndex(data[1], data[2])].cooldownAttack = 600
-    //             builds[whatIsBuildIndex(data[1], data[2])].inCooldown = true
-    //         }else{
-    //             units[whatIsUnitIndex(data[1],data[2])].inCooldown = true
-    //             units[whatIsUnitIndex(data[1],data[2])].cooldown += (600/data[6].speed)
-    //         }
-    //         createArrowAndShot(data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-    //         break
-    //     }
+            tempBuildUnit = whatBuildUnit
+            buildUnitHexX = data[2]
+            buildUnitHexY = data[3]
+            whatBuildUnit = data[4]
+            buildUnitSide = data[5]
+            buildUnit(data[1])
+            break
+        case 'createBuild': //id, hexX, hexY, structureType, side
+            tempBuildStructure = whatBuildStructure
+            buildStructureHexX = data[2]
+            buildStructureHexY = data[3]
+            whatBuildStructure = data[4]
+            buildStructureSide = data[5]
+            buildStructure(data[1])
+            break
+        case 'createArrow': //currentHexX, currentHexY, toHexX, toHexY, dist, speed, type
+            if(isCastleInThisHex(data[1], data[2])){
+                builds[whatIsBuildIndex(data[1], data[2])].cooldownAttack = 600
+                builds[whatIsBuildIndex(data[1], data[2])].inCooldown = true
+            }else{
+                units[whatIsUnitIndex(data[1],data[2])].inCooldown = true
+                units[whatIsUnitIndex(data[1],data[2])].cooldown += (600/data[6].speed)
+            }
+            createArrowAndShot(data[1], data[2], data[3], data[4], data[5], data[6], data[7])
+            break
+        }
     }
 var updateVisible = function(){
     for(var i = 0; i < HEXWIDTH; i++){
@@ -562,7 +562,7 @@ var buildStructure = function(id){
         whatBuildStructure = tempBuildStructure
     }
     updateVisible()
-    socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
+    //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
 }
 var getSpeed = function(unitType){
     switch(unitType){
@@ -613,7 +613,7 @@ var buildUnit = function(id){
         console.log('Всё ок, айдишники сходятся')
     }else{
         console.log('Нихуя не ок, айдишники не сходятся')
-        changeUnitsId = true
+        if(side == 'Red') changeUnitsId = true
     }
     units.push({
         id: idCount++,
@@ -651,7 +651,7 @@ var buildUnit = function(id){
     }
     updateVisible()
     //socket.emit('updateInfoAboutGame', ['createUnit', buildUnitHexX, buildUnitHexY, whatBuildUnit])
-    socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
+    //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
 }
 var wantBuildUnit = function(unitType){
     
@@ -971,7 +971,7 @@ window.onmousedown = function(e){
         units[whatIsUnitIndex(activeHexX, activeHexY)].active = false
         wood -= getWoodCost(whatBuildStructure)
         
-        socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
+        socket.emit('updateInfoAboutGame', ['createBuild', idCount, buildStructureHexX, buildStructureHexY, whatBuildStructure, yourSide])
         buildStructureSide = yourSide
         buildStructure()
         activeType = null
@@ -982,7 +982,7 @@ window.onmousedown = function(e){
         builds[whatIsBuildIndex(activeHexX, activeHexY)].active = false
         food -= getFoodCost(whatBuildUnit)
         
-        socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
+        socket.emit('updateInfoAboutGame', ['createUnit', idCount, buildUnitHexX, buildUnitHexY, whatBuildUnit, yourSide])
         buildUnitSide = yourSide
         buildUnit(idCount)
         activeType = null
@@ -1038,9 +1038,8 @@ var castleAttack = function(currentHexX, currentHexY, x, y){
         if(dist <= 3 && !builds[whatIsBuildIndex(currentHexX, currentHexY)].inCooldown){
             builds[whatIsBuildIndex(currentHexX, currentHexY)].cooldownAttack = 600
             builds[whatIsBuildIndex(currentHexX, currentHexY)].inCooldown = true
-           
+            socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, 3, 'justArrow'])
             createArrowAndShot(currentHexX, currentHexY, x, y, dist, 3, 'justArrow')
-            socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
             activeType = null
             activeHexX = -1
             activeHexY = -1
@@ -1159,14 +1158,13 @@ var rangerMoveOrAttack = function(currentHexX, currentHexY, x, y){
         if(rangerCanAttack(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, units[unitIndex].direction, units[unitIndex].type)){
             units[unitIndex].inCooldown = true
             units[unitIndex].cooldown += (600/units[unitIndex].speed)
-            if(units[unitIndex].type == 'A' || (units[unitIndex].type == 'D' && gold > 1 && gold-- > -1)){
-                // socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
+            if(units[unitIndex].type == 'A' || (units[unitIndex].type == 'D' && gold > 0 && gold-- > -1)){
+                socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'justArrow')
             } else if(units[unitIndex].type == 'R'){
-                // socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow'])
+                socket.emit('updateInfoAboutGame', ["createArrow", currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow'])
                 createArrowAndShot(currentHexX, currentHexY, x, y, dist, units[unitIndex].speed, 'dartArrow')
             }
-            socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
         }
         else{
             falseHexX = x
@@ -1955,13 +1953,12 @@ var createMovePath = function(hexX, hexY, toHexX, toHexY, dist){
         
 }
 var sentUnit = function(toHexX, toHexY, dist){
-    // socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
+    socket.emit('updateInfoAboutGame', ['moveUnit', units[unitIndex].id, units[unitIndex].stepToX,  units[unitIndex].stepToY, dist])
     units[unitIndex].move = true
     units[unitIndex].globalToX = toHexX
     units[unitIndex].globalToY = toHexY
     units[unitIndex].cooldown += dist*600/units[unitIndex].speed
     units[unitIndex].direction = whatIsDirection(units[unitIndex].hexX, units[unitIndex].hexY, units[unitIndex].stepToX[0], units[unitIndex].stepToY[0])
-    socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
 }
 var PEatEnemyIfCan = function(x, y){
     for(var i = 0; i < units.length; i++){
@@ -2115,23 +2112,21 @@ var getChanceToWin = function(typeAttack, attackerType, defenderType){
     return chance
 }
 var eatUnit = function(index){
-    //socket.emit('updateInfoAboutGame', ['killUnit', units[index].id])
+    socket.emit('updateInfoAboutGame', ['killUnit', units[index].id])
     units.splice(index, 1)
-    socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
+    //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
 }
 var fightVsStructure = function(unit, structure){
     
     if(builds[structure].type == 'C'){
-       // socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
-       // socket.emit('updateInfoAboutGame', ['killUnit', units[unit].id])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
+        socket.emit('updateInfoAboutGame', ['killUnit', units[unit].id])
         builds.splice(structure, 1)
         units.splice(unit, 1)
-        socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
     }else{
-        //socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
+        socket.emit('updateInfoAboutGame', ['killBuild', builds[structure].id])
         builds.splice(structure, 1)
-        socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
     }
     //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
@@ -2234,9 +2229,8 @@ var moveAndCheckArrows = function(){
                 }
                 
             }
-          //  socket.emit('updateInfoAboutGame', ['killArrow', i])
+            socket.emit('updateInfoAboutGame', ['killArrow', i])
             arrows.splice(i, 1)
-            socket.emit('updateInfoAboutGame', ['createBuild', units, builds, arrows])
             //socket.emit('updateInfoAboutGame', [0, units, builds, arrows])
         
         }
